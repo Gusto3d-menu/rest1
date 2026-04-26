@@ -119,134 +119,165 @@
     </a-scene>
 
     <script>
-        const visor = document.getElementById("visor");
-        const contenedor = document.getElementById("contenedor-estabilizador");
-        const info = document.getElementById("plato-info");
-        let todosPlatos = [];
-        let catalogo = [];
-        let platoActual = 0;
+    const visor = document.getElementById("visor");
+    const contenedor = document.getElementById("contenedor-estabilizador");
+    const info = document.getElementById("plato-info");
+    let todosPlatos = [];
+    let catalogo = [];
+    let platoActual = 0;
 
-        visor.addEventListener('model-loaded', function() {
-            const p = catalogo[platoActual];
-            console.log('✅ Modelo listo - activando animaciones', p?.velocidad);
-            
-            contenedor.removeAttribute("animation__escala");
-            visor.removeAttribute("animation__rotar");
-            
-            contenedor.setAttribute("position", p.pos);
-            contenedor.setAttribute("animation__escala", {
-                property: "scale",
-                to: p.escala,
-                dur: p.anim_dur || 1100,
-                easing: "easeOutElastic"
-            });
-            
-            visor.setAttribute("animation__rotar", {
-                property: "rotation",
-                from: p.rot_inicial,
-                to: p.rot_final,
-                dur: p.velocidad,
-                loop: true,
-                easing: "linear"
-            });
-
-            info.textContent = p.nombre;
-            info.classList.remove("en-preparacion");
+    visor.addEventListener('model-loaded', function() {
+        const p = catalogo[platoActual];
+        if (!p) return;
+        
+        console.log('✅ Modelo listo - activando animaciones', p.velocidad);
+        
+        contenedor.removeAttribute("animation__escala");
+        visor.removeAttribute("animation__rotar");
+        
+        contenedor.setAttribute("position", p.pos);
+        contenedor.setAttribute("animation__escala", {
+            property: "scale",
+            to: p.escala,
+            dur: p.anim_dur || 1100,
+            easing: "easeOutElastic"
+        });
+        
+        visor.setAttribute("animation__rotar", {
+            property: "rotation",
+            from: p.rot_inicial,
+            to: p.rot_final,
+            dur: p.velocidad,
+            loop: true,
+            easing: "linear"
         });
 
-        async function verificarModelo(url) {
-            try {
-                const response = await fetch(url, { method: 'HEAD' });
-                return response.ok;
-            } catch (e) { return false; }
+        info.textContent = p.nombre;
+        info.classList.remove("en-preparacion");
+    });
+
+    async function verificarModelo(url) {
+        try {
+            const response = await fetch(url, { method: 'HEAD', timeout: 5000 });
+            return response.ok;
+        } catch (e) { 
+            console.log(`❌ Modelo no disponible: ${url}`);
+            return false; 
         }
+    }
 
-        function filtrarPorCategoria(categoria) {
-            if (categoria === 'todos') {
-                catalogo = todosPlatos;
-            } else {
-                catalogo = todosPlatos.filter(plato => 
-                    plato.categoria && plato.categoria.toLowerCase() === categoria.toLowerCase()
-                );
-            }
-            
-            console.log(`🔄 ${categoria.toUpperCase()}: ${catalogo.length} platos`);
-            platoActual = 0;
-            if (catalogo.length > 0) {
-                cambiarPlato(0);
-            } else {
-                info.textContent = "Sin platos en esta categoría";
-                info.classList.add("show", "en-preparacion");
-            }
+    function filtrarPorCategoria(categoria) {
+        if (categoria === 'todos') {
+            catalogo = todosPlatos;
+        } else {
+            catalogo = todosPlatos.filter(plato => 
+                plato.categoria && plato.categoria.toLowerCase() === categoria.toLowerCase()
+            );
         }
-
-        async function cambiarPlato(dir) {
-            if (!catalogo.length) return;
-            platoActual = (platoActual + dir + catalogo.length) % catalogo.length;
-            const p = catalogo[platoActual];
-
-            contenedor.removeAttribute("animation__escala");
-            visor.removeAttribute("animation__rotar");
-            contenedor.setAttribute("scale", "0.01 0.01 0.01");
-            visor.removeAttribute("gltf-model"); 
-
-            info.textContent = p.nombre;
-            info.classList.remove("en-preparacion");
-            
-            const modeloExiste = await verificarModelo(p.archivo);
-            if (modeloExiste) {
-                visor.setAttribute("gltf-model", p.archivo);
-            } else {
-                info.textContent = "En preparación...";
-                info.classList.add("en-preparacion");
-            }
-            
-            info.classList.add("show");
+        
+        console.log(`🔄 ${categoria.toUpperCase()}: ${catalogo.length} platos`);
+        platoActual = 0;
+        if (catalogo.length > 0) {
+            cambiarPlato(0);
+        } else {
+            info.textContent = "Sin platos en esta categoría";
+            info.classList.add("show", "en-preparacion");
         }
+    }
 
-        function inicializarTabs() {
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    filtrarPorCategoria(this.dataset.categoria);
-                });
+    async function cambiarPlato(dir) {
+        if (!catalogo.length) {
+            console.log("❌ No hay platos en catálogo");
+            return;
+        }
+        
+        platoActual = (platoActual + dir + catalogo.length) % catalogo.length;
+        const p = catalogo[platoActual];
+
+        console.log(`🎯 Mostrando: ${p.nombre}`);
+
+        // Reset animaciones
+        contenedor.removeAttribute("animation__escala");
+        visor.removeAttribute("animation__rotar");
+        contenedor.setAttribute("scale", "0.01 0.01 0.01");
+        visor.removeAttribute("gltf-model"); 
+
+        info.textContent = p.nombre;
+        info.classList.remove("en-preparacion");
+        info.classList.add("show");
+        
+        // Verificar y cargar modelo
+        const modeloExiste = await verificarModelo(p.archivo);
+        if (modeloExiste) {
+            visor.setAttribute("gltf-model", p.archivo);
+        } else {
+            info.textContent = "En preparación...";
+            info.classList.add("en-preparacion");
+        }
+    }
+
+    function inicializarTabs() {
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                filtrarPorCategoria(this.dataset.categoria);
             });
-        }
+        });
+    }
 
-        async function iniciar() {
-            setTimeout(async () => {
-                try {
-                    const res = await fetch('./menu.json');
-                    const data = await res.json();
-                    todosPlatos = data.platos;
-                    catalogo = todosPlatos;
-                    
-                    inicializarTabs();
-                    document.getElementById("btn-prev").onclick = () => cambiarPlato(-1);
-                    document.getElementById("btn-next").onclick = () => cambiarPlato(1);
-                    
+    async function iniciar() {
+        console.log("🚀 Iniciando Gustó3D...");
+        
+        // Carga datos DESPUÉS de 3s
+        setTimeout(async () => {
+            try {
+                console.log("📥 Cargando menu.json...");
+                const res = await fetch('./menu.json');
+                const data = await res.json();
+                
+                todosPlatos = data.platos.filter(p => p.archivo); // Solo platos con archivo
+                catalogo = todosPlatos;
+                
+                console.log(`✅ Cargados ${todosPlatos.length} platos totales`);
+                
+                inicializarTabs();
+                document.getElementById("btn-prev").onclick = () => cambiarPlato(-1);
+                document.getElementById("btn-next").onclick = () => cambiarPlato(1);
+                
+                // 🆕 ESPERAR a que UI esté lista
+                setTimeout(() => {
                     if (catalogo.length > 0) {
                         cambiarPlato(0);
+                    } else {
+                        info.textContent = "Menú vacío";
+                        info.classList.add("show");
                     }
-                } catch (e) { 
-                    console.error("Error menú:", e);
-                    info.textContent = "Error cargando menú";
-                    info.classList.add("show", "en-preparacion");
-                }
-            }, 3000);
-            
+                }, 500);
+                
+            } catch (e) { 
+                console.error("❌ Error menú:", e);
+                info.textContent = "Error cargando menú";
+                info.classList.add("show", "en-preparacion");
+            }
+        }, 3000);
+        
+        // Ocultar loading DESPUÉS de 6s
+        setTimeout(() => {
+            console.log("✨ Ocultando loading screen");
+            document.getElementById("loading-screen").style.opacity = "0";
             setTimeout(() => {
-                document.getElementById("loading-screen").style.opacity = "0";
-                setTimeout(() => {
-                    document.getElementById("loading-screen").style.display = "none";
-                    document.getElementById("ui-overlay").classList.add("show");
-                    document.getElementById("categoria-tabs").classList.add("show");
-                }, 1200);
-            }, 6000);
-        }
+                document.getElementById("loading-screen").style.display = "none";
+                document.getElementById("ui-overlay").classList.add("show");
+                document.getElementById("categoria-tabs").classList.add("show");
+            }, 1200);
+        }, 6000);
+    }
 
-        document.addEventListener('DOMContentLoaded', iniciar);
-    </script>
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log("🎉 DOM listo");
+        iniciar();
+    });
+</script>
 </body>
 </html>
