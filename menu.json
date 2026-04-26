@@ -2,6 +2,7 @@
   "platos": [
     {
       "nombre": "Ramen",
+      "categoria": "Entradas",
       "archivo": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/plato01.glb",
       "pos": "0 0 0.1",
       "escala": "0.4 0.4 0.4",
@@ -12,6 +13,7 @@
     },
     {
       "nombre": "Food Can 415g",
+      "categoria": "Entradas",
       "archivo": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/plato02.glb",
       "pos": "0 0 0.1",
       "escala": "5 5 5",
@@ -22,6 +24,7 @@
     },
     {
       "nombre": "Hamburguesa",
+      "categoria": "Platos Fuertes",
       "archivo": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/plato03.glb",
       "pos": "0 0.2 0.1",
       "escala": "1.5 1.5 1.5",
@@ -32,6 +35,7 @@
     },
     {
       "nombre": "Pollo Broster",
+      "categoria": "Platos Fuertes",
       "archivo": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/plato04.glb",
       "pos": "-0.3 4 -4",
       "escala": "2 2 2",
@@ -42,6 +46,7 @@
     },
     {
       "nombre": "Extra Chocolate Marshmallow Cupcake",
+      "categoria": "Postres",
       "archivo": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/plato05.glb",
       "pos": "0 4 -4",
       "escala": "0.5 0.5 0.5",
@@ -52,6 +57,7 @@
     },
     {
       "nombre": "Desayuno americano",
+      "categoria": "Platos Fuertes",
       "archivo": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/plato06.glb",
       "pos": "0 2 -2",
       "escala": "5.5 5.5 5.5",
@@ -61,7 +67,8 @@
       "anim_dur": 1500
     },
     {
-      "nombre": "Plato 07",
+      "nombre": "Margarita Clásica",
+      "categoria": "Coctelería",
       "archivo": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/plato07.glb",
       "pos": "0 0 0.1",
       "escala": "4 4 4",
@@ -71,7 +78,8 @@
       "anim_dur": 1150
     },
     {
-      "nombre": "Plato 08",
+      "nombre": "Mojito Royal",
+      "categoria": "Coctelería",
       "archivo": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/plato08.glb",
       "pos": "0 0 0.1",
       "escala": "6.5 6.5 6.5",
@@ -81,7 +89,8 @@
       "anim_dur": 1600
     },
     {
-      "nombre": "Plato 09",
+      "nombre": "Tiramisú",
+      "categoria": "Postres",
       "archivo": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/plato09.glb",
       "pos": "0 0 0.1",
       "escala": "4.8 4.8 4.8",
@@ -91,7 +100,8 @@
       "anim_dur": 1250
     },
     {
-      "nombre": "Plato 10",
+      "nombre": "Cheesecake NY",
+      "categoria": "Postres",
       "archivo": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/plato10.glb",
       "pos": "0 0 0.1",
       "escala": "5 5 5",
