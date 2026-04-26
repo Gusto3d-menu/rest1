@@ -9,7 +9,7 @@
     <style>
         html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; position: fixed; background: #000; }
         
-        /* 🎨 PANTALLA DE CARGA MEJORADA (SIN CAMBIOS) */
+        /* 🎨 PANTALLA DE CARGA MEJORADA */
         #loading-screen { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: linear-gradient(135deg, #000 0%, #1a1a2e 50%, #16213e 100%);
@@ -49,15 +49,10 @@
             100% { width: 100%; }
         }
         
-        /* 📱 INFO PLATO (ajustado para tabs) */
-        #plato-info { 
-            position: fixed; top: 80px; width: 100%; text-align: center; 
-            color: white; font-family: sans-serif; font-size: 20px; font-weight: bold; 
-            text-shadow: 0 2px 10px rgba(0,0,0,0.9); z-index: 1000; opacity: 0; transition: 0.5s; 
-        }
+        #plato-info { position: fixed; top: 80px; width: 100%; text-align: center; color: white; font-family: sans-serif; font-size: 20px; font-weight: bold; text-shadow: 0 2px 10px rgba(0,0,0,0.9); z-index: 1000; opacity: 0; transition: 0.5s; }
         #plato-info.show { opacity: 1; }
         
-        /* 🆕 BARRA DE CATEGORÍAS (NUEVA) */
+        /* 🆕 BARRA DE CATEGORÍAS */
         #categoria-tabs {
             position: fixed; top: 20px; left: 0; width: 100%; 
             display: flex; justify-content: center; gap: 8px; 
@@ -80,25 +75,14 @@
             border-color: #25D366;
         }
         
-        /* 🎮 BOTONES NAVEGACIÓN (SIN CAMBIOS) */
-        #ui-overlay { 
-            position: fixed; bottom: 40px; left: 0; width: 100%; 
-            display: flex; justify-content: center; gap: 20px; z-index: 1000; 
-            opacity: 0; transition: 0.5s; 
-        }
+        #ui-overlay { position: fixed; bottom: 40px; left: 0; width: 100%; display: flex; justify-content: center; gap: 20px; z-index: 1000; opacity: 0; transition: 0.5s; }
         #ui-overlay.show { opacity: 1; }
-        .btn-gusto { 
-            padding: 15px 25px; background: linear-gradient(45deg, #25D366, #128C7E); 
-            color: white; border: 2px solid #fff; border-radius: 50px; font-weight: bold; 
-            cursor: pointer; text-transform: uppercase; box-shadow: 0 4px 15px rgba(0,0,0,0.4); 
-        }
-        
+        .btn-gusto { padding: 15px 25px; background: linear-gradient(45deg, #25D366, #128C7E); color: white; border: 2px solid #fff; border-radius: 50px; font-weight: bold; cursor: pointer; text-transform: uppercase; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
         .en-preparacion { color: #ff6b35 !important; font-size: 18px !important; animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
     </style>
 </head>
 <body>
-    <!-- 🎨 PANTALLA DE CARGA (SIN CAMBIOS) -->
     <div id="loading-screen">
         <img src="logo-banco.jpg" class="logo-gusto" alt="Logo">
         <div class="mensaje-carga">CARGANDO MENÚ GASTRONÓMICO</div>
@@ -110,7 +94,7 @@
         </div>
     </div>
 
-    <!-- 🆕 BARRA DE CATEGORÍAS -->
+    <!-- 🆕 CATEGORÍAS -->
     <div id="categoria-tabs">
         <button class="tab-btn active" data-categoria="todos">Todos</button>
         <button class="tab-btn" data-categoria="entradas">Entradas</button>
@@ -125,7 +109,6 @@
         <button class="btn-gusto" id="btn-next">→</button>
     </div>
 
-    <!-- 🎮 ESCENA 3D (SIN CAMBIOS) -->
     <a-scene mindar-image="imageTargetSrc: ./targets.mind; autoStart: true; uiLoading: no; uiScanning: no; filterMinCF: 0.001; filterBeta: 0.01;" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
         <a-entity mindar-image-target="targetIndex: 0">
@@ -139,15 +122,13 @@
         const visor = document.getElementById("visor");
         const contenedor = document.getElementById("contenedor-estabilizador");
         const info = document.getElementById("plato-info");
-        let todosPlatos = [];  // 🆕 Todos los platos originales
-        let catalogo = [];     // Platos filtrados por categoría
+        let todosPlatos = [];
+        let catalogo = [];
         let platoActual = 0;
-        let categoriaActual = 'todos';
 
-        // 🔥 EVENTO MODEL-LOADED (SIN CAMBIOS)
         visor.addEventListener('model-loaded', function() {
             const p = catalogo[platoActual];
-            console.log('✅ Modelo listo - activando animaciones', p.velocidad);
+            console.log('✅ Modelo listo - activando animaciones', p?.velocidad);
             
             contenedor.removeAttribute("animation__escala");
             visor.removeAttribute("animation__rotar");
@@ -180,19 +161,23 @@
             } catch (e) { return false; }
         }
 
-        // 🆕 FUNCIÓN FILTRAR POR CATEGORÍA
         function filtrarPorCategoria(categoria) {
             if (categoria === 'todos') {
                 catalogo = todosPlatos;
             } else {
                 catalogo = todosPlatos.filter(plato => 
-                    plato.categoria.toLowerCase() === categoria.toLowerCase()
+                    plato.categoria && plato.categoria.toLowerCase() === categoria.toLowerCase()
                 );
             }
             
-            console.log(`🔄 Filtrado ${categoria}: ${catalogo.length} platos`);
-            platoActual = 0; // Reset al primer plato
-            cambiarPlato(0); // Mostrar primer plato de nueva categoría
+            console.log(`🔄 ${categoria.toUpperCase()}: ${catalogo.length} platos`);
+            platoActual = 0;
+            if (catalogo.length > 0) {
+                cambiarPlato(0);
+            } else {
+                info.textContent = "Sin platos en esta categoría";
+                info.classList.add("show", "en-preparacion");
+            }
         }
 
         async function cambiarPlato(dir) {
@@ -205,12 +190,12 @@
             contenedor.setAttribute("scale", "0.01 0.01 0.01");
             visor.removeAttribute("gltf-model"); 
 
-            const modeloExiste = await verificarModelo(p.archivo);
+            info.textContent = p.nombre;
+            info.classList.remove("en-preparacion");
             
+            const modeloExiste = await verificarModelo(p.archivo);
             if (modeloExiste) {
                 visor.setAttribute("gltf-model", p.archivo);
-                info.textContent = p.nombre;
-                info.classList.remove("en-preparacion");
             } else {
                 info.textContent = "En preparación...";
                 info.classList.add("en-preparacion");
@@ -219,29 +204,49 @@
             info.classList.add("show");
         }
 
-        // 🆕 EVENTOS DE TABS
         function inicializarTabs() {
             document.querySelectorAll('.tab-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
-                    // Quitar active de todos
                     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-                    // Activar clicked
                     this.classList.add('active');
-                    
-                    categoriaActual = this.dataset.categoria;
-                    filtrarPorCategoria(categoriaActual);
+                    filtrarPorCategoria(this.dataset.categoria);
                 });
             });
         }
 
-        // 🎨 INICIO CON CARGA EXTENDIDA (MEJORADO)
         async function iniciar() {
             setTimeout(async () => {
                 try {
                     const res = await fetch('./menu.json');
                     const data = await res.json();
-                    todosPlatos = data.platos;  // Guardar todos
-                    catalogo = todosPlatos;     // Iniciar con "todos"
+                    todosPlatos = data.platos;
+                    catalogo = todosPlatos;
                     
-                    inicializarTabs();  // 🆕 Inicializar tabs
+                    inicializarTabs();
+                    document.getElementById("btn-prev").onclick = () => cambiarPlato(-1);
+                    document.getElementById("btn-next").onclick = () => cambiarPlato(1);
                     
+                    if (catalogo.length > 0) {
+                        cambiarPlato(0);
+                    }
+                } catch (e) { 
+                    console.error("Error menú:", e);
+                    info.textContent = "Error cargando menú";
+                    info.classList.add("show", "en-preparacion");
+                }
+            }, 3000);
+            
+            setTimeout(() => {
+                document.getElementById("loading-screen").style.opacity = "0";
+                setTimeout(() => {
+                    document.getElementById("loading-screen").style.display = "none";
+                    document.getElementById("ui-overlay").classList.add("show");
+                    document.getElementById("categoria-tabs").classList.add("show");
+                }, 1200);
+            }, 6000);
+        }
+
+        document.addEventListener('DOMContentLoaded', iniciar);
+    </script>
+</body>
+</html>
