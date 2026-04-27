@@ -61,11 +61,16 @@
              vr-mode-ui="enabled: false" 
              device-orientation-permission-ui="enabled: false" 
              id="ar-scene">
+        
+        <a-assets>
+            </a-assets>
+
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
-        <a-entity mindar-image-target="targetIndex: 0">
+
+        <a-entity mindar-image-target="targetIndex: 0" id="target-anchor">
             <a-entity id="contenedor-estabilizador" scale="0.01 0.01 0.01">
                 <a-gltf-model id="visor"></a-gltf-model>
-                <a-entity id="audio-plato" sound="src: ; autoplay: false; loop: false; volume: 0.8; poolSize: 1"></a-entity>
+                <a-entity id="audio-plato" sound="src: ; autoplay: false; loop: false; volume: 1; poolSize: 1"></a-entity>
             </a-entity>
         </a-entity>
     </a-scene>
@@ -83,49 +88,67 @@
         const nombresCategorias = ["Entradas", "Plato Fuerte", "Postres", "Bebidas"];
         const mapeoPlatos = { 0: [0, 1], 1: [2, 3], 2: [4], 3: [5] };
 
+        // Listener de carga del modelo
         visor.addEventListener('model-loaded', () => {
             const p = catalogo[window.platoSeleccionado];
             contenedor.setAttribute("position", p.pos);
-            contenedor.setAttribute("animation__escala", {property: "scale", to: p.escala, dur: p.anim_dur || 1100, easing: "easeOutElastic"});
-            visor.setAttribute("animation__rotar", {property: "rotation", from: p.rot_inicial, to: p.rot_final, dur: p.velocidad, loop: true, easing: "linear"});
+            contenedor.setAttribute("animation__escala", {
+                property: "scale", 
+                to: p.escala, 
+                dur: p.anim_dur || 1100, 
+                easing: "easeOutElastic"
+            });
+            visor.setAttribute("animation__rotar", {
+                property: "rotation", 
+                from: p.rot_inicial, 
+                to: p.rot_final, 
+                dur: p.velocidad, 
+                loop: true, 
+                easing: "linear"
+            });
         });
 
         async function mostrarPlatoAR(index) {
             window.platoSeleccionado = index;
             const p = catalogo[index];
             
-            // Ocultar interfaces
+            // UI
             document.querySelectorAll('.pantalla').forEach(pan => pan.classList.remove('activa'));
             document.getElementById('btn-volver').style.display = 'none';
 
-            // Reset Modelo
+            // Reset de visualización
             contenedor.setAttribute("scale", "0.01 0.01 0.01");
             visor.removeAttribute("gltf-model");
 
-            // ✅ Reset y Carga de Audio (sonido03.mp3)
-            if(elAudio.components.sound) { elAudio.components.sound.stopSound(); }
+            // ✅ Manejo de Audio Robusto
+            if (elAudio.components.sound) {
+                elAudio.components.sound.stopSound();
+            }
             if (p.audio) {
-                elAudio.setAttribute('sound', 'src', p.audio);
+                // Forzamos la actualización del atributo sound
+                elAudio.setAttribute('sound', { src: p.audio });
             }
 
+            // Iniciar MindAR
             const mindarSystem = arScene.systems['mindar-image-system'];
             await mindarSystem.start(); 
 
             try {
+                // Validación de archivo antes de cargar
                 const res = await fetch(p.archivo, { method: 'HEAD' });
                 if (res.ok) {
                     visor.setAttribute("gltf-model", p.archivo);
                     info.textContent = p.nombre;
                     info.classList.remove("en-preparacion");
                     
-                    // ✅ Reproducir audio con delay para mejor efecto
+                    // Disparo de audio
                     if (p.audio) {
                         setTimeout(() => {
-                            if(elAudio.components.sound) elAudio.components.sound.playSound();
-                        }, 1200); 
+                            if (elAudio.components.sound) elAudio.components.sound.playSound();
+                        }, 1500); 
                     }
                 } else { throw new Error(); }
-            } catch {
+            } catch (e) {
                 info.textContent = "En preparación...";
                 info.classList.add("en-preparacion");
             }
@@ -140,6 +163,7 @@
             const indices = mapeoPlatos[id];
             document.getElementById('titulo-categoria').textContent = nombresCategorias[id];
             lista.innerHTML = '';
+            
             indices.forEach(idx => {
                 const plato = catalogo[idx];
                 const item = document.createElement('div');
@@ -148,6 +172,7 @@
                 item.onclick = () => mostrarPlatoAR(idx);
                 lista.appendChild(item);
             });
+            
             document.getElementById('pantalla-platos').classList.add('activa');
             document.getElementById('btn-volver').style.display = 'block';
             document.getElementById('btn-volver').onclick = () => {
@@ -157,10 +182,13 @@
             };
         }
 
-        // ✅ Función para cerrar AR y SILENCIAR audio
         const cerrarAR = () => {
-            arScene.systems['mindar-image-system'].stop();
-            if(elAudio.components.sound) { elAudio.components.sound.stopSound(); }
+            if (arScene.systems['mindar-image-system']) {
+                arScene.systems['mindar-image-system'].stop();
+            }
+            if (elAudio.components.sound) {
+                elAudio.components.sound.stopSound();
+            }
             uiAr.style.display = 'none';
             info.style.display = 'none';
         };
@@ -178,7 +206,6 @@
                     };
                 });
 
-                // Botones Volver desde AR actualizados
                 document.getElementById('ar-back-list').onclick = () => {
                     cerrarAR();
                     abrirCategoria(catActual);
