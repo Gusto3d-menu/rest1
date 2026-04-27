@@ -40,21 +40,22 @@
         .btn-categoria {
             width: 280px; padding: 20px; margin: 10px; background: linear-gradient(45deg, #25D366, #128C7E);
             color: white; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
         .lista-platos { width: 85%; max-height: 60vh; overflow-y: auto; background: rgba(255,255,255,0.1); border-radius: 20px; padding: 15px; }
         .plato-item {
             padding: 20px; margin: 10px 0; background: rgba(37, 211, 102, 0.15);
             border: 1px solid rgba(255,255,255,0.2); border-radius: 15px; color: white;
-            display: flex; justify-content: space-between; font-family: sans-serif;
+            display: flex; justify-content: space-between; font-family: sans-serif; cursor: pointer;
         }
 
         /* UI SOBRE LA CÁMARA */
         #plato-info { position: fixed; top: 50px; width: 100%; text-align: center; color: white; font-family: sans-serif; font-size: 22px; font-weight: bold; text-shadow: 0 2px 10px #000; z-index: 1001; display: none; }
         #ui-ar { position: fixed; bottom: 40px; width: 100%; display: none; justify-content: center; gap: 15px; z-index: 1001; }
-        .btn-ar { padding: 15px 25px; background: #25D366; color: white; border: 2px solid white; border-radius: 50px; font-weight: bold; }
+        .btn-ar { padding: 15px 25px; background: linear-gradient(45deg, #25D366, #128C7E); color: white; border: 2px solid white; border-radius: 50px; font-weight: bold; }
         
-        #btn-volver { position: fixed; top: 20px; left: 20px; width: 50px; height: 50px; border-radius: 50%; background: #25D366; color: white; border: none; z-index: 2500; display: none; font-size: 20px; }
+        #btn-volver { position: fixed; top: 20px; left: 20px; width: 50px; height: 50px; border-radius: 50%; background: #25D366; color: white; border: 2px solid white; z-index: 2500; display: none; font-size: 20px; }
         
         .en-preparacion { color: #ff6b35 !important; animation: pulse 2s infinite; }
         @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
@@ -89,7 +90,8 @@
         <button class="btn-ar" id="ar-back-menu">MENÚ PRINCIPAL</button>
     </div>
 
-    <a-scene mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; uiLoading: no; uiScanning: no;" 
+    <!-- ✅ FILTROS MINDAR DEL PRIMER CÓDIGO (ESTABILIZACIÓN) -->
+    <a-scene mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; uiLoading: no; uiScanning: no; filterMinCF: 0.001; filterBeta: 0.01;" 
              vr-mode-ui="enabled: false" 
              device-orientation-permission-ui="enabled: false" 
              id="ar-scene">
@@ -113,11 +115,12 @@
         const nombresCategorias = ["Entradas", "Plato Fuerte", "Postres", "Bebidas"];
         const mapeoPlatos = { 0: [0, 1], 1: [2, 3], 2: [4], 3: [5] };
 
-        // Animación de carga de modelos
+        // ✅ EVENTO MODEL-LOADED DEL PRIMER CÓDIGO (ESTABILIZACIÓN)
         visor.addEventListener('model-loaded', () => {
             const p = catalogo[window.platoSeleccionado];
+            // Posicionar ANTES de escalar (clave para estabilidad)
             contenedor.setAttribute("position", p.pos);
-            contenedor.setAttribute("animation__escala", {property: "scale", to: p.escala, dur: 1100, easing: "easeOutElastic"});
+            contenedor.setAttribute("animation__escala", {property: "scale", to: p.escala, dur: p.anim_dur || 1100, easing: "easeOutElastic"});
             visor.setAttribute("animation__rotar", {property: "rotation", from: p.rot_inicial, to: p.rot_final, dur: p.velocidad, loop: true, easing: "linear"});
         });
 
@@ -129,11 +132,11 @@
             document.querySelectorAll('.pantalla').forEach(pan => pan.classList.remove('activa'));
             document.getElementById('btn-volver').style.display = 'none';
 
-            // Reset de visualización
+            // ✅ RESET COMPLETO COMO EN PRIMER CÓDIGO
             contenedor.setAttribute("scale", "0.01 0.01 0.01");
             visor.removeAttribute("gltf-model");
 
-            // ACTIVAR CÁMARA
+            // ✅ FILTROS MINDAR ACTIVADOS (estabilización)
             const mindarSystem = arScene.systems['mindar-image-system'];
             await mindarSystem.start(); 
 
