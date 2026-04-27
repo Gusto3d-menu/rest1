@@ -124,15 +124,16 @@
         const nombresCategorias = ["Entradas", "Plato Fuerte", "Postres", "Bebidas"];
         const mapeoPlatos = { 0: [0, 1], 1: [2, 3], 2: [4], 3: [5] };
 
-        // ✅ EVENTO MODEL-LOADED DEL PRIMER CÓDIGO (ESTABILIZACIÓN)
+        // ✅ 🔧 NUEVO EVENTO PARA DEBUG DE AUDIO (después de constantes)
         visor.addEventListener('model-loaded', () => {
+            console.log('✅ Modelo cargado, listo para audio');
             const p = catalogo[window.platoSeleccionado];
-            // Posicionar ANTES de escalar (clave para estabilidad)
-            contenedor.setAttribute("position", p.pos);
-            contenedor.setAttribute("animation__escala", {property: "scale", to: p.escala, dur: p.anim_dur || 1100, easing: "easeOutElastic"});
-            visor.setAttribute("animation__rotar", {property: "rotation", from: p.rot_inicial, to: p.rot_final, dur: p.velocidad, loop: true, easing: "linear"});
+            if (p && p.audio) {
+                console.log('🎵 Trigger audio después de modelo:', p.nombre);
+            }
         });
 
+        // ✅ CORREGIDA - FUNCIÓN mostrarPlatoAR MEJORADA
         async function mostrarPlatoAR(index) {
             window.platoSeleccionado = index;
             const p = catalogo[index];
@@ -145,14 +146,15 @@
             contenedor.setAttribute("scale", "0.01 0.01 0.01");
             visor.removeAttribute("gltf-model");
 
-            // ✅ PARAR AUDIO PREVIO SI EXISTE
+            // ✅ PARAR AUDIO PREVIO
             const audioPlato = document.getElementById('audio-plato');
+            const audioSource = document.getElementById('audio-source');
             if (audioPlato.components.sound) {
                 audioPlato.components.sound.pauseSound();
             }
-            audioPlato.setAttribute('src', '#audio-source');
+            audioSource.setAttribute('src', '');
 
-            // ✅ FILTROS MINDAR ACTIVADOS (estabilización)
+            // ✅ FILTROS MINDAR ACTIVADOS
             const mindarSystem = arScene.systems['mindar-image-system'];
             await mindarSystem.start(); 
 
@@ -169,22 +171,46 @@
                 info.classList.add("en-preparacion");
             }
 
-            // ✅ CARGAR Y REPRODUCIR AUDIO SI EXISTE (SOLO HAMBURGUESA por ahora)
+            // ✅ 🎵 NUEVA LÓGICA DE AUDIO MEJORADA CON DEBUG
             if (p.audio) {
-                try {
-                    const audioSource = document.getElementById('audio-source');
-                    audioSource.setAttribute('src', p.audio);
+                console.log('🔊 Cargando audio para:', p.nombre, p.audio);
+                
+                // Pre-cargar audio
+                audioSource.setAttribute('src', p.audio);
+                
+                // Esperar a que el asset esté listo
+                const audioLoadedHandler = () => {
+                    console.log('✅ Audio asset cargado, configurando...');
                     audioPlato.setAttribute('src', p.audio);
                     
-                    // Reproducir 1.5s después de cargar el modelo
+                    // Delay para estabilidad
                     setTimeout(() => {
                         if (audioPlato.components.sound) {
                             audioPlato.components.sound.playSound();
+                            console.log('🎵 Audio A-Frame reproduciéndose');
                         }
-                    }, 1500);
-                } catch (e) {
-                    console.warn('Error cargando audio:', e);
-                }
+                    }, 800);
+                };
+                
+                audioSource.addEventListener('loaded', audioLoadedHandler, { once: true });
+                
+                // Fallback múltiple
+                setTimeout(() => {
+                    if (!audioPlato.components.sound.isPlaying()) {
+                        console.log('🔄 Fallback 1: Reintentando...');
+                        audioPlato.setAttribute('src', p.audio);
+                        audioPlato.components.sound.playSound();
+                    }
+                }, 3000);
+                
+                setTimeout(() => {
+                    if (!audioPlato.components.sound.isPlaying()) {
+                        console.log('🔄 Fallback 2: Audio HTML5');
+                        const fallbackAudio = new Audio(p.audio);
+                        fallbackAudio.volume = 0.7;
+                        fallbackAudio.play().catch(e => console.error('Audio fallback error:', e));
+                    }
+                }, 5000);
             }
 
             info.style.display = 'block';
