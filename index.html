@@ -1,459 +1,203 @@
 <!DOCTYPE html>
-
 <html lang="es">
-
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-
     <title>Gustó3D - Menú Interactivo</title>
-
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
-
     <style>
-
         html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; position: fixed; background: #000; }
-
         
-
-        /* PANTALLA 1: CARGA */
-
         #loading-screen { 
-
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-
             background: linear-gradient(135deg, #000 0%, #1a1a2e 50%, #16213e 100%);
-
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
-
             z-index: 3000; transition: opacity 1.2s ease-out;
-
         }
-
-        .logo-gusto { width: 220px; height: auto; margin-bottom: 30px; filter: drop-shadow(0 0 20px rgba(37, 211, 102, 0.5)); animation: float 3s ease-in-out infinite; }
-
-        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
-
+        .logo-gusto { width: 220px; height: auto; margin-bottom: 30px; filter: drop-shadow(0 0 20px rgba(37, 211, 102, 0.5)); }
         
-
-        .mensaje-carga { color: #25D366; font-family: sans-serif; letter-spacing: 3px; font-size: 14px; text-transform: uppercase; margin-bottom: 20px; animation: pulse-text 1.5s infinite; }
-
-        @keyframes pulse-text { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-
-        
-
-        .barra-progreso { width: 200px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; overflow: hidden; }
-
-        .progreso-fill { height: 100%; background: linear-gradient(90deg, #25D366, #128C7E); width: 0%; animation: progress-fill 4s ease-out forwards; }
-
-        @keyframes progress-fill { 0% { width: 0%; } 100% { width: 100%; } }
-
-
-
-        /* PANTALLAS DE INTERFAZ */
-
         .pantalla {
-
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-
             display: flex; flex-direction: column; justify-content: center; align-items: center;
-
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-
             z-index: 2000; opacity: 0; visibility: hidden; transition: all 0.5s ease;
-
         }
-
         .pantalla.activa { opacity: 1; visibility: visible; }
 
-
-
-        /* CATEGORÍAS Y LISTAS */
-
-        #pantalla-categorias h1 { color: #25D366; font-family: sans-serif; font-size: 24px; margin-bottom: 40px; text-align: center; }
-
         .btn-categoria {
-
             width: 280px; padding: 20px; margin: 10px; background: linear-gradient(45deg, #25D366, #128C7E);
-
             color: white; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; text-transform: uppercase;
-
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-
         }
-
-
 
         .lista-platos { width: 85%; max-height: 60vh; overflow-y: auto; background: rgba(255,255,255,0.1); border-radius: 20px; padding: 15px; }
-
+        
+        /* ITEM DE PLATO CON BOTÓN DE AUDIO */
         .plato-item {
-
-            padding: 20px; margin: 10px 0; background: rgba(37, 211, 102, 0.15);
-
+            padding: 15px; margin: 10px 0; background: rgba(37, 211, 102, 0.15);
             border: 1px solid rgba(255,255,255,0.2); border-radius: 15px; color: white;
-
-            display: flex; justify-content: space-between; font-family: sans-serif; cursor: pointer;
-
+            display: flex; flex-direction: column; gap: 10px; font-family: sans-serif;
+        }
+        .btn-ver-ar {
+            background: #25D366; color: black; border: none; padding: 10px; 
+            border-radius: 8px; font-weight: bold; cursor: pointer; text-align: center;
         }
 
-
-
-        /* UI SOBRE LA CÁMARA */
-
-        #plato-info { position: fixed; top: 50px; width: 100%; text-align: center; color: white; font-family: sans-serif; font-size: 22px; font-weight: bold; text-shadow: 0 2px 10px #000; z-index: 1001; display: none; }
-
+        #plato-info { position: fixed; top: 50px; width: 100%; text-align: center; color: white; font-family: sans-serif; font-size: 22px; font-weight: bold; z-index: 1001; display: none; }
         #ui-ar { position: fixed; bottom: 40px; width: 100%; display: none; justify-content: center; gap: 15px; z-index: 1001; }
-
         .btn-ar { padding: 15px 25px; background: linear-gradient(45deg, #25D366, #128C7E); color: white; border: 2px solid white; border-radius: 50px; font-weight: bold; }
-
         
-
-        #btn-volver { position: fixed; top: 20px; left: 20px; width: 50px; height: 50px; border-radius: 50%; background: #25D366; color: white; border: 2px solid white; z-index: 2500; display: none; font-size: 20px; }
-
-        
-
-        .en-preparacion { color: #ff6b35 !important; animation: pulse 2s infinite; }
-
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
-
+        #btn-volver { position: fixed; top: 20px; left: 20px; width: 50px; height: 50px; border-radius: 50%; background: #25D366; color: white; border: 2px solid white; z-index: 2500; display: none; }
     </style>
-
 </head>
-
 <body>
 
-
-
     <div id="loading-screen">
-
-        <img src="logo-banco.jpg" class="logo-gusto" alt="Logo">
-
-        <div class="mensaje-carga">CARGANDO EXPERIENCIA</div>
-
-        <div class="barra-progreso"><div class="progreso-fill"></div></div>
-
+        <div class="mensaje-carga">GUSTÓ 3D</div>
+        <div style="width: 200px; height: 4px; background: rgba(255,255,255,0.2); margin-top: 20px;">
+            <div id="fill" style="height: 100%; background: #25D366; width: 0%;"></div>
+        </div>
     </div>
 
-
-
-    <div id="pantalla-categorias" class="pantalla">
-
-        <h1>🍽️ SELECCIONA CATEGORÍA</h1>
-
+    <div id="pantalla-categorias" class="pantalla activa">
+        <h1 style="color: #25D366; font-family: sans-serif;">SELECCIONA CATEGORÍA</h1>
         <button class="btn-categoria" data-cat="0">🥗 ENTRADAS</button>
-
         <button class="btn-categoria" data-cat="1">🍖 PLATO FUERTE</button>
-
         <button class="btn-categoria" data-cat="2">🍰 POSTRES</button>
-
         <button class="btn-categoria" data-cat="3">🥤 BEBIDAS</button>
-
     </div>
-
-
 
     <div id="pantalla-platos" class="pantalla">
-
         <h2 id="titulo-categoria" style="color: #25D366; font-family: sans-serif;"></h2>
-
         <div class="lista-platos" id="lista-platos"></div>
-
     </div>
-
-
 
     <button id="btn-volver">←</button>
 
-
-
     <div id="plato-info"></div>
-
     <div id="ui-ar">
-
-        <button class="btn-ar" id="ar-back-list">VER LISTA</button>
-
-        <button class="btn-ar" id="ar-back-menu">MENÚ PRINCIPAL</button>
-
+        <button class="btn-ar" id="ar-back-list">VOLVER</button>
     </div>
 
-
-
-    <!-- ✅ FILTROS MINDAR DEL PRIMER CÓDIGO (ESTABILIZACIÓN) -->
-
-    <a-scene mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; uiLoading: no; uiScanning: no; filterMinCF: 0.001; filterBeta: 0.01;" 
-
-             vr-mode-ui="enabled: false" 
-
-             device-orientation-permission-ui="enabled: false" 
-
-             id="ar-scene">
+    <a-scene mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; uiLoading: no; uiScanning: no;" 
+             vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" id="ar-scene">
+        
+        <a-assets>
+            <audio id="sonido-plato-tag" crossorigin="anonymous"></audio>
+        </a-assets>
 
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
-
         <a-entity mindar-image-target="targetIndex: 0">
-
-            <a-entity id="contenedor-estabilizador" scale="0.01 0.01 0.01">
-
-                <a-gltf-model id="visor"></a-gltf-model>
-
+            <a-entity id="contenedor-estabilizador">
+                <a-gltf-model id="visor" rotation="90 0 0"></a-gltf-model>
+                <a-entity id="entidad-sonido" sound="src: #sonido-plato-tag; autoplay: false"></a-entity>
             </a-entity>
-
         </a-entity>
-
     </a-scene>
 
-
-
     <script>
-
-        const visor = document.getElementById("visor");
-
-        const contenedor = document.getElementById("contenedor-estabilizador");
-
-        const info = document.getElementById("plato-info");
-
-        const arScene = document.getElementById("ar-scene");
-
-        const uiAr = document.getElementById("ui-ar");
-
-        
-
         let catalogo = [];
-
         let catActual = -1;
-
+        const mapeoPlatos = { 0: [0, 1], 1: [2, 3], 2: [4], 3: [5] };
         const nombresCategorias = ["Entradas", "Plato Fuerte", "Postres", "Bebidas"];
 
-        const mapeoPlatos = { 0: [0, 1], 1: [2, 3], 2: [4], 3: [5] };
+        const arScene = document.getElementById('ar-scene');
+        const visor = document.getElementById('visor');
+        const audioTag = document.getElementById('sonido-plato-tag');
+        const soundEntity = document.getElementById('entidad-sonido');
 
-
-
-        // ✅ EVENTO MODEL-LOADED DEL PRIMER CÓDIGO (ESTABILIZACIÓN)
-
-        visor.addEventListener('model-loaded', () => {
-
-            const p = catalogo[window.platoSeleccionado];
-
-            // Posicionar ANTES de escalar (clave para estabilidad)
-
-            contenedor.setAttribute("position", p.pos);
-
-            contenedor.setAttribute("animation__escala", {property: "scale", to: p.escala, dur: p.anim_dur || 1100, easing: "easeOutElastic"});
-
-            visor.setAttribute("animation__rotar", {property: "rotation", from: p.rot_inicial, to: p.rot_final, dur: p.velocidad, loop: true, easing: "linear"});
-
-        });
-
-
-
-        async function mostrarPlatoAR(index) {
-
-            window.platoSeleccionado = index;
-
-            const p = catalogo[index];
-
+        // ✅ FUNCIÓN CLAVE: SE ACTIVA POR CLIC DEL USUARIO
+        async function mostrarPlatoAR(idx) {
+            const plato = catalogo[idx];
             
-
-            // Ocultar interfaces
-
-            document.querySelectorAll('.pantalla').forEach(pan => pan.classList.remove('activa'));
-
+            // 1. Limpiar interfaces
+            document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
             document.getElementById('btn-volver').style.display = 'none';
 
-
-
-            // ✅ RESET COMPLETO COMO EN PRIMER CÓDIGO
-
-            contenedor.setAttribute("scale", "0.01 0.01 0.01");
-
-            visor.removeAttribute("gltf-model");
-
-
-
-            // ✅ FILTROS MINDAR ACTIVADOS (estabilización)
-
-            const mindarSystem = arScene.systems['mindar-image-system'];
-
-            await mindarSystem.start(); 
-
-
-
-            // Cargar Modelo
-
-            try {
-
-                const res = await fetch(p.archivo, { method: 'HEAD' });
-
-                if (res.ok) {
-
-                    visor.setAttribute("gltf-model", p.archivo);
-
-                    info.textContent = p.nombre;
-
-                    info.classList.remove("en-preparacion");
-
-                } else { throw new Error(); }
-
-            } catch {
-
-                info.textContent = "En preparación...";
-
-                info.classList.add("en-preparacion");
-
+            // 2. Configurar Audio (El clic del botón permite esto)
+            if (plato.audio) {
+                audioTag.src = plato.audio;
+                audioTag.load();
+                audioTag.oncanplaythrough = () => {
+                    soundEntity.components.sound.stopSound();
+                    soundEntity.components.sound.playSound();
+                };
             }
 
+            // 3. Configurar Modelo 3D
+            visor.setAttribute('gltf-model', plato.archivo);
+            visor.setAttribute('scale', plato.escala || "1 1 1");
+            
+            // 4. Iniciar Cámara
+            const mindarSystem = arScene.systems['mindar-image-system'];
+            await mindarSystem.start();
 
-
-            info.style.display = 'block';
-
-            uiAr.style.display = 'flex';
-
+            document.getElementById('plato-info').textContent = plato.nombre;
+            document.getElementById('plato-info').style.display = 'block';
+            document.getElementById('ui-ar').style.display = 'flex';
         }
-
-
 
         function abrirCategoria(id) {
-
             catActual = id;
-
             const lista = document.getElementById('lista-platos');
-
-            const indices = mapeoPlatos[id];
-
-            
-
             document.getElementById('titulo-categoria').textContent = nombresCategorias[id];
-
             lista.innerHTML = '';
 
-            
-
-            indices.forEach(idx => {
-
-                const plato = catalogo[idx];
-
-                const item = document.createElement('div');
-
-                item.className = 'plato-item';
-
-                item.innerHTML = `<span>${plato.nombre}</span><span>➔</span>`;
-
-                item.onclick = () => mostrarPlatoAR(idx);
-
-                lista.appendChild(item);
-
+            mapeoPlatos[id].forEach(idx => {
+                const p = catalogo[idx];
+                const div = document.createElement('div');
+                div.className = 'plato-item';
+                div.innerHTML = `
+                    <div style="display:flex; justify-content: space-between;">
+                        <strong>${p.nombre}</strong>
+                        <span>${p.audio ? '🔊' : ''}</span>
+                    </div>
+                    <button class="btn-ver-ar" onclick="mostrarPlatoAR(${idx})">VER EN REALIDAD AUMENTADA</button>
+                `;
+                lista.appendChild(div);
             });
 
-
-
             document.getElementById('pantalla-platos').classList.add('activa');
-
             document.getElementById('btn-volver').style.display = 'block';
-
-            document.getElementById('btn-volver').onclick = () => {
-
-                document.getElementById('pantalla-platos').classList.remove('activa');
-
-                document.getElementById('pantalla-categorias').classList.add('activa');
-
-                document.getElementById('btn-volver').style.display = 'none';
-
-            };
-
         }
 
-
-
+        // Inicialización
         async function init() {
-
             try {
-
                 const res = await fetch('./menu.json');
-
                 const data = await res.json();
-
                 catalogo = data.platos;
 
-
-
-                // Eventos botones categoría
-
                 document.querySelectorAll('.btn-categoria').forEach(btn => {
-
-                    btn.onclick = () => {
-
-                        document.getElementById('pantalla-categorias').classList.remove('activa');
-
-                        abrirCategoria(parseInt(btn.dataset.cat));
-
-                    };
-
+                    btn.onclick = () => abrirCategoria(parseInt(btn.dataset.cat));
                 });
 
-
-
-                // Botones Volver desde AR
+                document.getElementById('btn-volver').onclick = () => {
+                    document.getElementById('pantalla-platos').classList.remove('activa');
+                    document.getElementById('pantalla-categorias').classList.add('activa');
+                    document.getElementById('btn-volver').style.display = 'none';
+                };
 
                 document.getElementById('ar-back-list').onclick = () => {
-
-                    arScene.systems['mindar-image-system'].stop();
-
-                    uiAr.style.display = 'none';
-
-                    info.style.display = 'none';
-
-                    abrirCategoria(catActual);
-
+                    location.reload(); // Forma más limpia de resetear cámara y audio
                 };
 
+                // Simular carga
+                let p = 0;
+                const interval = setInterval(() => {
+                    p += 10;
+                    document.getElementById('fill').style.width = p + '%';
+                    if(p >= 100) {
+                        clearInterval(interval);
+                        document.getElementById('loading-screen').style.opacity = '0';
+                        setTimeout(() => document.getElementById('loading-screen').style.display = 'none', 1000);
+                    }
+                }, 100);
 
-
-                document.getElementById('ar-back-menu').onclick = () => {
-
-                    arScene.systems['mindar-image-system'].stop();
-
-                    uiAr.style.display = 'none';
-
-                    info.style.display = 'none';
-
-                    document.getElementById('pantalla-categorias').classList.add('activa');
-
-                };
-
-
-
-                // Quitar pantalla de carga
-
-                setTimeout(() => {
-
-                    document.getElementById('loading-screen').style.opacity = '0';
-
-                    setTimeout(() => {
-
-                        document.getElementById('loading-screen').style.display = 'none';
-
-                        document.getElementById('pantalla-categorias').classList.add('activa');
-
-                    }, 1200);
-
-                }, 4000);
-
-
-
-            } catch (e) { console.error("Error inicializando:", e); }
-
+            } catch (e) { console.error(e); }
         }
 
-
-
         window.onload = init;
-
     </script>
-
 </body>
-
 </html>
