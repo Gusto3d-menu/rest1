@@ -1,65 +1,128 @@
 {
-  "platos": [
-    {
-      "nombre": "Ramen",
-      "archivo": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/plato01.glb",
-      "pos": "0 0 0.1",
-      "escala": "0.4 0.4 0.4",
-      "rot_inicial": "90 0 0",
-      "rot_final": "90 360 0",
-      "velocidad": 20000,
-      "anim_dur": 1100
-    },
-    {
-      "nombre": "Food Can 415g",
-      "archivo": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/plato02.glb",
-      "pos": "0 0 0.1",
-      "escala": "5 5 5",
-      "rot_inicial": "90 0 0",
-      "rot_final": "90 360 0",
-      "velocidad": 14000,
-      "anim_dur": 1200
-    },
-    {
-      "nombre": "Hamburguesa",
-      "archivo": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/plato03.glb",
-      "audio": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/sonido03.mp3",
-      "pos": "0 0.2 0.1",
-      "escala": "1.5 1.5 1.5",
-      "rot_inicial": "90 0 0",
-      "rot_final": "90 360 0",
-      "velocidad": 13000,
-      "anim_dur": 1300
-    },
-    {
-      "nombre": "Pollo Broster",
-      "archivo": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/plato04.glb",
-      "pos": "-0.3 4 -4",
-      "escala": "2 2 2",
-      "rot_inicial": "90 0 0",
-      "rot_final": "90 360 0",
-      "velocidad": 15000,
-      "anim_dur": 1400
-    },
-    {
-      "nombre": "Extra Chocolate Marshmallow Cupcake",
-      "archivo": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/plato05.glb",
-      "pos": "0 4 -4",
-      "escala": "0.5 0.5 0.5",
-      "rot_inicial": "90 0 0",
-      "rot_final": "90 360 0",
-      "velocidad": 11000,
-      "anim_dur": 1000
-    },
-    {
-      "nombre": "Desayuno americano",
-      "archivo": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/plato06.glb",
-      "pos": "0 2 -2",
-      "escala": "5.5 5.5 5.5",
-      "rot_inicial": "90 0 0",
-      "rot_final": "90 360 0",
-      "velocidad": 16000,
-      "anim_dur": 1500
-    }
-  ]
+"platos": [
+
+
+{
+
+  "nombre": "Ramen",
+
+  "archivo": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/plato01.glb",
+
+  "pos": "0 0 0.1",
+
+  "escala": "0.4 0.4 0.4",
+
+  "rot_inicial": "90 0 0",
+
+  "rot_final": "90 360 0",
+
+  "velocidad": 20000,
+
+  "anim_dur": 1100
+
+},
+
+{
+
+  "nombre": "Food Can 415g",
+
+  "archivo": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/plato02.glb",
+
+  "pos": "0 0 0.1",
+
+  "escala": "5 5 5",
+
+  "rot_inicial": "90 0 0",
+
+  "rot_final": "90 360 0",
+
+  "velocidad": 14000,
+
+  "anim_dur": 1200
+
+},
+
+{
+
+  "nombre": "Hamburguesa",
+
+  "archivo": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/plato03.glb",
+
+  "pos": "0 0.2 0.1",
+
+  "escala": "1.5 1.5 1.5",
+
+  "rot_inicial": "90 0 0",
+
+  "rot_final": "90 360 0",
+
+  "velocidad": 13000,
+
+  "anim_dur": 1300
+
+},
+
+{
+
+  "nombre": "Pollo Broster",
+
+  "archivo": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/plato04.glb",
+
+  "pos": "-0.3 4 -4",
+
+  "escala": "2 2 2",
+
+  "rot_inicial": "90 0 0",
+
+  "rot_final": "90 360 0",
+
+  "velocidad": 15000,
+
+  "anim_dur": 1400
+
+},
+
+{
+
+  "nombre": "Extra Chocolate Marshmallow Cupcake",
+
+  "archivo": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/plato05.glb",
+
+  "pos": "0 4 -4",
+
+  "escala": "0.5 0.5 0.5",
+
+  "rot_inicial": "90 0 0",
+
+  "rot_final": "90 360 0",
+
+  "velocidad": 11000,
+
+  "anim_dur": 1000
+
+},
+
+{
+
+  "nombre": "Desayuno americano",
+
+  "archivo": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/plato06.glb",
+
+  "pos": "0 2 -2",
+
+  "escala": "5.5 5.5 5.5",
+
+  "rot_inicial": "90 0 0",
+
+  "rot_final": "90 360 0",
+
+  "velocidad": 16000,
+
+  "anim_dur": 1500
+
+}
+
+]
+
+
 }
