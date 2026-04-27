@@ -9,139 +9,90 @@
     <style>
         html, body { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; position: fixed; background: #000; }
         
-        /* 🎨 PANTALLA 1: CARGA (ORIGINAL) */
+        /* PANTALLA 1: CARGA */
         #loading-screen { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: linear-gradient(135deg, #000 0%, #1a1a2e 50%, #16213e 100%);
             display: flex; flex-direction: column; justify-content: center; align-items: center; 
             z-index: 3000; transition: opacity 1.2s ease-out;
         }
-        .logo-gusto { 
-            width: 220px; height: auto; margin-bottom: 30px; 
-            filter: drop-shadow(0 0 20px rgba(37, 211, 102, 0.5));
-            animation: float 3s ease-in-out infinite;
-        }
+        .logo-gusto { width: 220px; height: auto; margin-bottom: 30px; filter: drop-shadow(0 0 20px rgba(37, 211, 102, 0.5)); animation: float 3s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
-        .mensaje-carga { 
-            color: #25D366; font-family: sans-serif; letter-spacing: 3px; 
-            font-size: 14px; text-transform: uppercase; margin-bottom: 20px;
-            animation: pulse-text 1.5s infinite;
-        }
+        
+        .mensaje-carga { color: #25D366; font-family: sans-serif; letter-spacing: 3px; font-size: 14px; text-transform: uppercase; margin-bottom: 20px; animation: pulse-text 1.5s infinite; }
         @keyframes pulse-text { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-        .barra-progreso { width: 200px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; overflow: hidden; margin-top: 20px; }
-        .progreso-fill { height: 100%; background: linear-gradient(90deg, #25D366, #128C7E); width: 0%; transition: width 0.3s ease; border-radius: 2px; animation: progress-fill 4s ease-out forwards; }
-        @keyframes progress-fill { 0% { width: 0%; } 70% { width: 85%; } 100% { width: 100%; } }
+        
+        .barra-progreso { width: 200px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px; overflow: hidden; }
+        .progreso-fill { height: 100%; background: linear-gradient(90deg, #25D366, #128C7E); width: 0%; animation: progress-fill 4s ease-out forwards; }
+        @keyframes progress-fill { 0% { width: 0%; } 100% { width: 100%; } }
 
-        /* 🆕 PANTALLAS */
+        /* PANTALLAS DE INTERFAZ */
         .pantalla {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             display: flex; flex-direction: column; justify-content: center; align-items: center;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
-            z-index: 2000; opacity: 0; visibility: hidden; transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: 2000; opacity: 0; visibility: hidden; transition: all 0.5s ease;
         }
         .pantalla.activa { opacity: 1; visibility: visible; }
 
-        /* 🆕 PANTALLA 2: CATEGORÍAS */
-        #pantalla-categorias h1 {
-            color: #25D366; font-family: sans-serif; font-size: 28px; margin-bottom: 60px;
-            text-shadow: 0 0 20px rgba(37, 211, 102, 0.5); letter-spacing: 2px;
-        }
+        /* CATEGORÍAS Y LISTAS */
+        #pantalla-categorias h1 { color: #25D366; font-family: sans-serif; font-size: 24px; margin-bottom: 40px; text-align: center; }
         .btn-categoria {
-            width: 300px; height: 70px; margin: 15px 0; background: linear-gradient(45deg, #25D366, #128C7E);
-            color: white; border: none; border-radius: 50px; font-size: 20px; font-weight: bold;
-            cursor: pointer; text-transform: uppercase; letter-spacing: 1px;
-            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4); transition: all 0.3s ease;
+            width: 280px; padding: 20px; margin: 10px; background: linear-gradient(45deg, #25D366, #128C7E);
+            color: white; border: none; border-radius: 50px; font-weight: bold; cursor: pointer; text-transform: uppercase;
         }
-        .btn-categoria:hover, .btn-categoria.activo { transform: translateY(-5px); box-shadow: 0 12px 35px rgba(37, 211, 102, 0.6); }
 
-        /* 🆕 PANTALLA 3: PLATOS */
-        #pantalla-platos h2 {
-            color: #25D366; font-family: sans-serif; font-size: 26px; margin-bottom: 40px;
-            text-shadow: 0 0 15px rgba(37, 211, 102, 0.5);
-        }
-        .lista-platos {
-            max-width: 380px; max-height: 500px; overflow-y: auto; padding: 25px;
-            background: rgba(255,255,255,0.1); border-radius: 25px; backdrop-filter: blur(15px);
-            border: 1px solid rgba(37,211,102,0.3);
-        }
+        .lista-platos { width: 85%; max-height: 60vh; overflow-y: auto; background: rgba(255,255,255,0.1); border-radius: 20px; padding: 15px; }
         .plato-item {
-            padding: 25px; margin: 12px 0; background: linear-gradient(45deg, rgba(37,211,102,0.2), rgba(18,140,126,0.2));
-            border: 2px solid rgba(255,255,255,0.2); border-radius: 20px; cursor: pointer;
-            color: white; font-family: sans-serif; font-size: 18px; font-weight: bold;
-            transition: all 0.3s ease; display: flex; justify-content: space-between; align-items: center;
-        }
-        .plato-item:hover {
-            background: linear-gradient(45deg, #25D366, #128C7E); transform: scale(1.05);
-            box-shadow: 0 12px 40px rgba(37, 211, 102, 0.5);
+            padding: 20px; margin: 10px 0; background: rgba(37, 211, 102, 0.15);
+            border: 1px solid rgba(255,255,255,0.2); border-radius: 15px; color: white;
+            display: flex; justify-content: space-between; font-family: sans-serif;
         }
 
-        /* 🆕 BOTÓN VOLVER */
-        #btn-volver {
-            position: fixed; top: 40px; left: 40px; width: 65px; height: 65px; border-radius: 50%;
-            background: rgba(37,211,102,0.9); color: white; border: 3px solid #fff; font-size: 20px;
-            font-weight: bold; cursor: pointer; z-index: 2500; opacity: 0; transition: all 0.3s ease;
-        }
-        #btn-volver.show { opacity: 1; transform: scale(1); }
-
-        /* 🆕 PANTALLA 4: AR */
-        #plato-info { 
-            position: fixed; top: 70px; width: 90%; text-align: center; color: white; 
-            font-family: sans-serif; font-size: 26px; font-weight: bold; 
-            text-shadow: 0 3px 15px rgba(0,0,0,0.9); z-index: 1001; opacity: 0; transition: 0.5s; 
-        }
-        #plato-info.show { opacity: 1; }
-        #ui-ar {
-            position: fixed; bottom: 60px; left: 0; width: 100%; display: flex; 
-            justify-content: space-between; padding: 0 50px; gap: 20px; z-index: 1001; opacity: 0; transition: 0.5s;
-        }
-        #ui-ar.show { opacity: 1; }
-        .btn-gusto {
-            padding: 18px 30px; background: linear-gradient(45deg, #25D366, #128C7E);
-            color: white; border: 3px solid #fff; border-radius: 50px; font-weight: bold; 
-            font-size: 16px; cursor: pointer; text-transform: uppercase; 
-            box-shadow: 0 8px 25px rgba(0,0,0,0.4); transition: all 0.3s ease;
-        }
-        .btn-gusto:hover { transform: scale(1.05); box-shadow: 0 12px 35px rgba(0,0,0,0.6); }
-        .en-preparacion { color: #ff6b35 !important; font-size: 22px !important; animation: pulse 2s infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.7; } }
+        /* UI SOBRE LA CÁMARA */
+        #plato-info { position: fixed; top: 50px; width: 100%; text-align: center; color: white; font-family: sans-serif; font-size: 22px; font-weight: bold; text-shadow: 0 2px 10px #000; z-index: 1001; display: none; }
+        #ui-ar { position: fixed; bottom: 40px; width: 100%; display: none; justify-content: center; gap: 15px; z-index: 1001; }
+        .btn-ar { padding: 15px 25px; background: #25D366; color: white; border: 2px solid white; border-radius: 50px; font-weight: bold; }
+        
+        #btn-volver { position: fixed; top: 20px; left: 20px; width: 50px; height: 50px; border-radius: 50%; background: #25D366; color: white; border: none; z-index: 2500; display: none; font-size: 20px; }
+        
+        .en-preparacion { color: #ff6b35 !important; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
     </style>
 </head>
 <body>
-    <!-- 🎨 PANTALLA 1: CARGA -->
+
     <div id="loading-screen">
         <img src="logo-banco.jpg" class="logo-gusto" alt="Logo">
-        <div class="mensaje-carga">CARGANDO MENÚ GASTRONÓMICO</div>
+        <div class="mensaje-carga">CARGANDO EXPERIENCIA</div>
         <div class="barra-progreso"><div class="progreso-fill"></div></div>
-        <div style="color: #666; font-size: 12px; margin-top: 30px; letter-spacing: 1px;">Inicializando Realidad Aumentada...</div>
     </div>
 
-    <!-- 🆕 PANTALLA 2: CATEGORÍAS -->
     <div id="pantalla-categorias" class="pantalla">
-        <h1>🍽️ ELIGE TU CATEGORÍA</h1>
-        <button class="btn-categoria" data-categoria="0">🥗 ENTRADAS</button>
-        <button class="btn-categoria" data-categoria="1">🍖 PLATO FUERTE</button>
-        <button class="btn-categoria" data-categoria="2">🍰 POSTRES</button>
-        <button class="btn-categoria" data-categoria="3">🥤 BEBIDAS</button>
+        <h1>🍽️ SELECCIONA CATEGORÍA</h1>
+        <button class="btn-categoria" data-cat="0">🥗 ENTRADAS</button>
+        <button class="btn-categoria" data-cat="1">🍖 PLATO FUERTE</button>
+        <button class="btn-categoria" data-cat="2">🍰 POSTRES</button>
+        <button class="btn-categoria" data-cat="3">🥤 BEBIDAS</button>
     </div>
 
-    <!-- 🆕 PANTALLA 3: LISTADO PLATOS -->
     <div id="pantalla-platos" class="pantalla">
-        <h2 id="titulo-categoria"></h2>
+        <h2 id="titulo-categoria" style="color: #25D366; font-family: sans-serif;"></h2>
         <div class="lista-platos" id="lista-platos"></div>
     </div>
 
-    <!-- 🆕 BOTÓN VOLVER -->
     <button id="btn-volver">←</button>
 
-    <!-- 🆕 PANTALLA 4: AR -->
     <div id="plato-info"></div>
     <div id="ui-ar">
-        <button class="btn-gusto" id="btn-volver-lista">← Lista</button>
-        <button class="btn-gusto" id="btn-volver-categoria">← Categorías</button>
+        <button class="btn-ar" id="ar-back-list">VER LISTA</button>
+        <button class="btn-ar" id="ar-back-menu">MENÚ PRINCIPAL</button>
     </div>
 
-    <a-scene mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; uiLoading: no; uiScanning: no; filterMinCF: 0.001; filterBeta: 0.01;" 
-             vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false" id="ar-scene">
+    <a-scene mindar-image="imageTargetSrc: ./targets.mind; autoStart: false; uiLoading: no; uiScanning: no;" 
+             vr-mode-ui="enabled: false" 
+             device-orientation-permission-ui="enabled: false" 
+             id="ar-scene">
         <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
         <a-entity mindar-image-target="targetIndex: 0">
             <a-entity id="contenedor-estabilizador" scale="0.01 0.01 0.01">
@@ -155,93 +106,122 @@
         const contenedor = document.getElementById("contenedor-estabilizador");
         const info = document.getElementById("plato-info");
         const arScene = document.getElementById("ar-scene");
-        let catalogo = [], categoriaActual = -1, platoActual = 0;
-        const categorias = ["Entradas", "Plato Fuerte", "Postres", "Bebidas"];
+        const uiAr = document.getElementById("ui-ar");
         
-        // 📱 DISTRIBUCIÓN EXACTA DE TUS 6 PLATOS
-        const platosPorCategoria = {
-            0: [0, 1],  // Entradas: Ramen, Food Can
-            1: [2, 3],  // Plato Fuerte: Hamburguesa, Pollo Broster
-            2: [4],     // Postres: Cupcake
-            3: [5]      // Bebidas: Desayuno americano
-        };
+        let catalogo = [];
+        let catActual = -1;
+        const nombresCategorias = ["Entradas", "Plato Fuerte", "Postres", "Bebidas"];
+        const mapeoPlatos = { 0: [0, 1], 1: [2, 3], 2: [4], 3: [5] };
 
-        visor.addEventListener('model-loaded', function() {
-            const p = catalogo[platoActual];
-            contenedor.removeAttribute("animation__escala");
-            visor.removeAttribute("animation__rotar");
+        // Animación de carga de modelos
+        visor.addEventListener('model-loaded', () => {
+            const p = catalogo[window.platoSeleccionado];
             contenedor.setAttribute("position", p.pos);
-            contenedor.setAttribute("animation__escala", {property: "scale", to: p.escala, dur: p.anim_dur || 1100, easing: "easeOutElastic"});
+            contenedor.setAttribute("animation__escala", {property: "scale", to: p.escala, dur: 1100, easing: "easeOutElastic"});
             visor.setAttribute("animation__rotar", {property: "rotation", from: p.rot_inicial, to: p.rot_final, dur: p.velocidad, loop: true, easing: "linear"});
-            info.textContent = p.nombre; info.classList.remove("en-preparacion");
         });
 
-        async function verificarModelo(url) { try { return (await fetch(url, {method: 'HEAD'})).ok; } catch { return false; } }
+        async function mostrarPlatoAR(index) {
+            window.platoSeleccionado = index;
+            const p = catalogo[index];
+            
+            // Ocultar interfaces
+            document.querySelectorAll('.pantalla').forEach(pan => pan.classList.remove('activa'));
+            document.getElementById('btn-volver').style.display = 'none';
 
-        async function mostrarPlato(index) {
-            platoActual = index; const p = catalogo[index];
-            document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
-            document.getElementById('btn-volver').classList.remove('show');
-            arScene.components['mindar-image'].start(); setTimeout(() => arScene.enterVR(), 500);
-            contenedor.setAttribute("scale", "0.01 0.01 0.01"); visor.removeAttribute("gltf-model");
-            const existe = await verificarModelo(p.archivo);
-            if (existe) { visor.setAttribute("gltf-model", p.archivo); info.textContent = p.nombre; info.classList.remove("en-preparacion"); }
-            else { info.textContent = "En preparación..."; info.classList.add("en-preparacion"); }
-            info.classList.add("show"); document.getElementById('ui-ar').classList.add('show');
+            // Reset de visualización
+            contenedor.setAttribute("scale", "0.01 0.01 0.01");
+            visor.removeAttribute("gltf-model");
+
+            // ACTIVAR CÁMARA
+            const mindarSystem = arScene.systems['mindar-image-system'];
+            await mindarSystem.start(); 
+
+            // Cargar Modelo
+            try {
+                const res = await fetch(p.archivo, { method: 'HEAD' });
+                if (res.ok) {
+                    visor.setAttribute("gltf-model", p.archivo);
+                    info.textContent = p.nombre;
+                    info.classList.remove("en-preparacion");
+                } else { throw new Error(); }
+            } catch {
+                info.textContent = "En preparación...";
+                info.classList.add("en-preparacion");
+            }
+
+            info.style.display = 'block';
+            uiAr.style.display = 'flex';
         }
 
-        function mostrarPlatosDeCategoria(catIndex) {
-            categoriaActual = catIndex; const indices = platosPorCategoria[catIndex];
-            const platos = indices.map(i => catalogo[i]);
-            document.getElementById('titulo-categoria').textContent = `${categorias[catIndex]} (${platos.length})`;
-            const lista = document.getElementById('lista-platos'); lista.innerHTML = '';
-            platos.forEach((plato, i) => {
-                const item = document.createElement('div'); item.className = 'plato-item';
-                item.innerHTML = `<span>${plato.nombre}</span> <span>🍽️</span>`;
-                item.onclick = () => mostrarPlato(indices[i]); lista.appendChild(item);
+        function abrirCategoria(id) {
+            catActual = id;
+            const lista = document.getElementById('lista-platos');
+            const indices = mapeoPlatos[id];
+            
+            document.getElementById('titulo-categoria').textContent = nombresCategorias[id];
+            lista.innerHTML = '';
+            
+            indices.forEach(idx => {
+                const plato = catalogo[idx];
+                const item = document.createElement('div');
+                item.className = 'plato-item';
+                item.innerHTML = `<span>${plato.nombre}</span><span>➔</span>`;
+                item.onclick = () => mostrarPlatoAR(idx);
+                lista.appendChild(item);
             });
+
             document.getElementById('pantalla-platos').classList.add('activa');
-            document.getElementById('btn-volver').classList.add('show');
-            document.getElementById('btn-volver').onclick = () => mostrarCategorias();
+            document.getElementById('btn-volver').style.display = 'block';
+            document.getElementById('btn-volver').onclick = () => {
+                document.getElementById('pantalla-platos').classList.remove('activa');
+                document.getElementById('pantalla-categorias').classList.add('activa');
+                document.getElementById('btn-volver').style.display = 'none';
+            };
         }
 
-        function mostrarCategorias() {
-            document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
-            document.getElementById('pantalla-categorias').classList.add('activa');
-            document.getElementById('btn-volver').classList.remove('show');
-            document.querySelectorAll('.btn-categoria').forEach(btn => btn.classList.remove('activo'));
-        }
+        async function init() {
+            try {
+                const res = await fetch('./menu.json');
+                const data = await res.json();
+                catalogo = data.platos;
 
-        async function iniciar() {
-            setTimeout(async () => {
-                try {
-                    const res = await fetch('./menu.json'); catalogo = (await res.json()).platos;
-                    document.querySelectorAll('.btn-categoria').forEach(btn => {
-                        btn.onclick = (e) => {
-                            document.querySelectorAll('.btn-categoria').forEach(b => b.classList.remove('activo'));
-                            btn.classList.add('activo'); mostrarPlatosDeCategoria(parseInt(btn.dataset.categoria));
-                        };
-                    });
-                    document.getElementById('btn-volver-lista').onclick = () => {
-                        arScene.components['mindar-image'].stop(); document.getElementById('ui-ar').classList.remove('show');
-                        info.classList.remove('show'); mostrarPlatosDeCategoria(categoriaActual);
+                // Eventos botones categoría
+                document.querySelectorAll('.btn-categoria').forEach(btn => {
+                    btn.onclick = () => {
+                        document.getElementById('pantalla-categorias').classList.remove('activa');
+                        abrirCategoria(parseInt(btn.dataset.cat));
                     };
-                    document.getElementById('btn-volver-categoria').onclick = () => {
-                        arScene.components['mindar-image'].stop(); document.getElementById('ui-ar').classList.remove('show');
-                        info.classList.remove('show'); mostrarCategorias();
-                    };
-                } catch (e) { console.error("❌ Error menú:", e); }
-            }, 3000);
-            setTimeout(() => {
-                document.getElementById("loading-screen").style.opacity = "0";
+                });
+
+                // Botones Volver desde AR
+                document.getElementById('ar-back-list').onclick = () => {
+                    arScene.systems['mindar-image-system'].stop();
+                    uiAr.style.display = 'none';
+                    info.style.display = 'none';
+                    abrirCategoria(catActual);
+                };
+
+                document.getElementById('ar-back-menu').onclick = () => {
+                    arScene.systems['mindar-image-system'].stop();
+                    uiAr.style.display = 'none';
+                    info.style.display = 'none';
+                    document.getElementById('pantalla-categorias').classList.add('activa');
+                };
+
+                // Quitar pantalla de carga
                 setTimeout(() => {
-                    document.getElementById("loading-screen").style.display = "none";
-                    mostrarCategorias();
-                }, 1200);
-            }, 6000);
+                    document.getElementById('loading-screen').style.opacity = '0';
+                    setTimeout(() => {
+                        document.getElementById('loading-screen').style.display = 'none';
+                        document.getElementById('pantalla-categorias').classList.add('activa');
+                    }, 1200);
+                }, 4000);
+
+            } catch (e) { console.error("Error inicializando:", e); }
         }
 
-        document.addEventListener('DOMContentLoaded', iniciar);
+        window.onload = init;
     </script>
 </body>
 </html>
