@@ -23,6 +23,7 @@
     {
       "nombre": "Hamburguesa",
       "archivo": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/plato03.glb",
+      "audio": "https://raw.githubusercontent.com/Gusto3d-menu/gusto3d-assets/main/sonido03.mp3",
       "pos": "0 0.2 0.1",
       "escala": "1.5 1.5 1.5",
       "rot_inicial": "90 0 0",
