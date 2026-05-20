@@ -9,176 +9,284 @@
     <style>
         :root {
             --neon-green: #76b82d;
-            --cyber-blue: #4facfe;
+            --cyber-blue: #00f2fe;
+            --dark-bg: #0b0f19;
         }
 
         body {
-            background-color: #0f172a;
-            /* Fondo de circuitos simulado con CSS */
+            background-color: var(--dark-bg);
             background-image: 
-                radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.8), #000),
+                radial-gradient(circle at 50% 30%, rgba(20, 30, 55, 0.7), #05070c),
                 url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
             color: white;
-            font-family: 'Segoe UI', sans-serif;
+            font-family: 'Segoe UI', system-ui, sans-serif;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        /* Líneas de circuito animadas */
-        .circuit-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            opacity: 0.3;
-            background: linear-gradient(90.5deg, rgba(79, 172, 254, 0.1) 0.5%, rgba(0, 0, 0, 0) 90%);
-        }
-
-        .glass-panel {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .glass-panel::before {
-            content: "";
+        /* Efecto de líneas de circuito */
+        .cyber-grid {
             position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(118, 184, 45, 0.2), transparent);
-            transition: 0.5s;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(rgba(0, 242, 254, 0.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(0, 242, 254, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -1;
         }
 
-        .glass-panel:hover::before {
-            left: 100%;
+        .glass-card {
+            background: rgba(255, 255, 255, 0.02);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .glass-panel:hover {
+        .glass-card:hover {
             border-color: var(--neon-green);
-            transform: translateY(-5px);
-            box-shadow: 0 0 25px rgba(118, 184, 45, 0.2);
+            transform: translateY(-8px);
+            box-shadow: 0 0 30px rgba(118, 184, 45, 0.25);
         }
 
         model-viewer {
             width: 100%;
-            height: 350px;
+            height: 420px;
             margin: 0 auto;
             --poster-color: transparent;
         }
 
-        .neon-border {
-            border-top: 2px solid var(--neon-green);
-            box-shadow: 0 -10px 20px -10px var(--neon-green);
+        .neon-glow {
+            text-shadow: 0 0 15px rgba(118, 184, 45, 0.6);
         }
 
-        /* Estilo para los detalles que aparecen */
+        /* Animación suave para detalles */
         .plan-details {
-            display: none;
-            animation: fadeIn 0.5s forwards;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .selected .plan-details {
+            max-height: 600px;
+            opacity: 1;
+            margin-top: 1.5rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1.5rem;
         }
 
-        .selected .plan-details { display: block; }
-        .selected { border-color: var(--neon-green); background: rgba(118, 184, 45, 0.1); }
+        .selected {
+            border-color: var(--neon-green) !important;
+            background: rgba(118, 184, 45, 0.04) !important;
+            box-shadow: 0 0 40px rgba(118, 184, 45, 0.15);
+        }
     </style>
 </head>
 <body>
 
-    <div class="circuit-bg"></div>
+    <div class="cyber-grid"></div>
 
-    <nav class="flex justify-between items-center p-6 border-b border-white/10 bg-black/20 backdrop-blur-md">
-        <div class="flex items-center gap-2">
-            <img src="logo.jpg" alt="Logo" class="h-10">
-            <span class="text-2xl font-bold tracking-tighter">GUSTÓ <span class="text-[#76b82d]">3D</span></span>
+    <nav class="flex justify-between items-center p-6 max-w-7xl mx-auto border-b border-white/5 bg-black/10 backdrop-blur-md sticky top-0 z-50">
+        <div class="flex items-center gap-3">
+            <img src="logo.jpg" alt="Logo Gustó 3D" class="h-10">
+            <span class="text-xl font-black tracking-wider text-white">GUSTÓ <span class="text-[#76b82d]">3D</span></span>
         </div>
-        <div class="flex gap-4">
-            <a href="#" class="text-sm uppercase tracking-widest pt-2">Instagram</a>
-            <a href="#" class="bg-[#76b82d] text-black font-bold px-6 py-2 rounded-sm skew-x-[-15deg] hover:skew-x-0 transition-all">
-                AGENDAR CITA
+        <div class="flex items-center gap-6">
+            <a href="https://instagram.com/" target="_blank" class="text-sm font-semibold tracking-widest uppercase text-gray-400 hover:text-white transition">Instagram</a>
+            <a href="https://wa.me/tu-numero-aqui?text=Hola%20Luis,%20quiero%20agendar%20una%20demostración%20para%20mi%20hotel/restaurante" 
+               class="bg-[#76b82d] text-black font-black px-6 py-2.5 rounded-lg hover:bg-white hover:scale-105 transition-all shadow-lg shadow-green-900/30 text-sm tracking-wider">
+                AGENDAR DEMO
             </a>
         </div>
     </nav>
 
-    <section class="py-12 text-center">
-        <div class="max-w-4xl mx-auto px-4">
-            <div class="relative">
-                <div class="absolute inset-0 border border-blue-500/20 scale-110 rounded-full blur-3xl"></div>
+    <header class="max-w-7xl mx-auto px-6 pt-12 pb-24 text-center relative">
+        <div class="grid md:grid-cols-2 gap-12 items-center text-left">
+            <div>
+                <span class="text-xs font-bold tracking-widest text-[#76b82d] uppercase bg-green-500/10 px-3 py-1 rounded-full">Tecnología de Vanguardia</span>
+                <h1 class="text-5xl md:text-6xl font-black mt-4 mb-6 leading-tight uppercase italic">
+                    Menús que <br><span class="text-[#76b82d] neon-glow">cobran vida.</span>
+                </h1>
+                <p class="text-xl text-gray-400 font-medium mb-4">
+                    El menú del futuro para huéspedes y comensales exigentes.
+                </p>
+                <div class="p-4 bg-white/5 rounded-xl border border-white/10 max-w-md flex items-center gap-4">
+                    <div class="bg-white p-2 rounded-lg shrink-0">
+                        <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://gusto3d-menu.github.io/webgusto/" alt="QR Demo" class="w-20 h-20">
+                    </div>
+                    <p class="text-sm text-gray-300">
+                        <strong class="text-white block mb-1">¿Incrédulo? Pruébalo ahora:</strong>
+                        Escanea este código QR con tu celular y mira cómo se materializa nuestra propuesta interactiva sobre tu escritorio.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="relative bg-gradient-to-b from-white/5 to-transparent p-6 rounded-3xl border border-white/5">
+                <div class="absolute top-4 left-6 text-xs text-gray-500 uppercase tracking-widest z-10">Muestra Interactiva en Tiempo Real</div>
                 <model-viewer 
                     src="centro.glb" 
                     auto-rotate 
                     camera-controls 
-                    shadow-intensity="1" 
+                    shadow-intensity="1.5" 
                     environment-image="neutral"
-                    exposure="1.2">
+                    exposure="1.3"
+                    disable-zoom>
                 </model-viewer>
+                <p class="text-center text-xs text-gray-400 mt-2 uppercase tracking-widest">Usa tu mouse o dedo para rotar el plato</p>
             </div>
-            <h2 class="text-4xl md:text-6xl font-black mt-8 uppercase italic">Menús que <span class="text-[#76b82d]">cobran vida</span></h2>
         </div>
-    </section>
+    </header>
 
-    <section class="max-w-6xl mx-auto px-6 grid md:grid-cols-3 gap-8 pb-20">
-        
-        <div class="glass-panel p-8 cursor-pointer group" onclick="selectPlan(this)">
-            <div class="h-12 w-12 border border-[#76b82d] rounded flex items-center justify-center mb-6">
-                <span class="text-[#76b82d] font-bold">01</span>
+    <section class="border-t border-white/5 bg-black/30 py-24">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-xs font-bold tracking-widest text-[#76b82d] uppercase mb-3">Métricas Reales</h2>
+                <p class="text-3xl md:text-4xl font-black uppercase">No vendemos software. <br>Vendemos Impacto Comercial.</p>
             </div>
-            <h3 class="text-2xl font-bold mb-2">GASTRO EXPRESS</h3>
-            <p class="text-gray-400 text-sm mb-6">Digitalización esencial para bares y cafés.</p>
-            <div class="text-3xl font-black mb-8">$29 <span class="text-xs text-gray-500">/ MES</span></div>
             
-            <div class="plan-details border-t border-white/10 pt-4">
-                <p class="text-[#76b82d] text-xs font-bold mb-4">¿POR QUÉ ES PARA TI?</p>
-                <p class="text-sm text-gray-300">Perfecto para negocios que inician en el mundo digital y quieren destacar sus 5 platos estrella con Realidad Aumentada.</p>
-                <button class="mt-6 w-full py-3 bg-white text-black font-bold text-xs uppercase tracking-widest">Solicitar Piloto</button>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="p-8 bg-white/[0.01] border border-white/5 rounded-2xl">
+                    <div class="text-4xl font-black text-[#76b82d] mb-4">+20%</div>
+                    <h4 class="text-lg font-bold mb-2 text-white uppercase">Aumento en Ticket Promedio</h4>
+                    <p class="text-sm text-gray-400 leading-relaxed">La comida entra por los ojos. Visualizar postres emplatados de alta gama o cortes premium directamente en la mesa dispara el deseo de compra del comensal de forma instantánea.</p>
+                </div>
+                <div class="p-8 bg-white/[0.01] border border-white/5 rounded-2xl">
+                    <div class="text-4xl font-black text-cyan-400 mb-4">0%</div>
+                    <h4 class="text-lg font-bold mb-2 text-white uppercase">Barreras de Idioma</h4>
+                    <p class="text-sm text-gray-400 leading-relaxed">Ideal para el turismo de hotel. Los huéspedes internacionales ordenan con total seguridad al ver las dimensiones, texturas e ingredientes reales en RA, eliminando fallos en la orden.</p>
+                </div>
+                <div class="p-8 bg-white/[0.01] border border-white/5 rounded-2xl">
+                    <div class="text-4xl font-black text-purple-400 mb-4">Revolución</div>
+                    <h4 class="text-lg font-bold mb-2 text-white uppercase">Room Service Optimizado</h4>
+                    <p class="text-sm text-gray-400 leading-relaxed">Transforma la aburrida carta física de la habitación. Al escanear el QR desde la cama, el huésped vive una experiencia interactiva de lujo que multiplica los pedidos al cuarto.</p>
+                </div>
             </div>
         </div>
-
-        <div class="glass-panel p-8 cursor-pointer border-[#76b82d]/50" onclick="selectPlan(this)">
-            <div class="h-12 w-12 bg-[#76b82d] rounded flex items-center justify-center mb-6">
-                <span class="text-black font-bold">02</span>
-            </div>
-            <h3 class="text-2xl font-bold mb-2">GASTRO PREMIUM</h3>
-            <p class="text-gray-400 text-sm mb-6">La experiencia completa para restaurantes gourmet.</p>
-            <div class="text-3xl font-black mb-8">$59 <span class="text-xs text-gray-500">/ MES</span></div>
-
-            <div class="plan-details border-t border-white/10 pt-4">
-                <p class="text-[#76b82d] text-xs font-bold mb-4">¿POR QUÉ ES PARA TI?</p>
-                <p class="text-sm text-gray-300">Ideal si buscas exclusividad. Incluye audio-descripciones y 15 platos que tus clientes verán en 3D sobre su mesa.</p>
-                <button class="mt-6 w-full py-3 bg-[#76b82d] text-black font-bold text-xs uppercase tracking-widest">Solicitar Piloto</button>
-            </div>
-        </div>
-
-        <div class="glass-panel p-8 cursor-pointer" onclick="selectPlan(this)">
-            <div class="h-12 w-12 border border-blue-400 rounded flex items-center justify-center mb-6">
-                <span class="text-blue-400 font-bold">03</span>
-            </div>
-            <h3 class="text-2xl font-bold mb-2">HOTEL EXECUTIVE</h3>
-            <p class="text-gray-400 text-sm mb-6">Solución integral para hoteles y room service.</p>
-            <div class="text-3xl font-black mb-8">$129 <span class="text-xs text-gray-500">/ MES</span></div>
-
-            <div class="plan-details border-t border-white/10 pt-4">
-                <p class="text-[#76b82d] text-xs font-bold mb-4">¿POR QUÉ ES PARA TI?</p>
-                <p class="text-sm text-gray-300">Diseñado para grandes operaciones. 30 platos, multi-idioma y analíticas para optimizar tus ventas de Room Service.</p>
-                <button class="mt-6 w-full py-3 bg-white text-black font-bold text-xs uppercase tracking-widest">Solicitar Piloto</button>
-            </div>
-        </div>
-
     </section>
 
-    <footer class="p-10 text-center border-t border-white/10 bg-black/40">
-        <p class="text-xs text-gray-500 tracking-widest">© 2026 GUSTÓ 3D | CARACAS - VENEZUELA</p>
+    <section class="max-w-7xl mx-auto px-6 py-24">
+        <div class="text-center mb-16">
+            <h2 class="text-xs font-bold tracking-widest text-[#76b82d] uppercase mb-3">Inversión y Licenciamiento</h2>
+            <p class="text-3xl md:text-4xl font-black uppercase">Planes diseñados a tu escala</p>
+            <p class="text-gray-400 mt-2 text-sm">Haz clic sobre cualquier plan para desplegar los detalles y beneficios exclusivos.</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8 items-start">
+            
+            <div class="glass-card p-8 cursor-pointer group" onclick="selectPlan(this)">
+                <span class="text-xs font-bold tracking-widest text-gray-500 block mb-2 uppercase">Pequeños Negocios / Cafés</span>
+                <h3 class="text-2xl font-black tracking-tight mb-4">GASTRO EXPRESS</h3>
+                <p class="text-sm text-gray-400 mb-6">Digitalización esencial. Ideal para validar el impacto de la realidad aumentada en tus platos bandera o barras de autor.</p>
+                
+                <div class="space-y-1 mb-6">
+                    <div class="text-sm text-gray-400">Setup Inicial (Único pago): <strong class="text-white">$150</strong></div>
+                    <div class="text-4xl font-black text-[#76b82d]">$29 <span class="text-xs font-normal text-gray-500 uppercase">/ Mes</span></div>
+                    <div class="text-xs text-gray-500 italic">Opcional: $280 todo el año completo</div>
+                </div>
+
+                <div class="plan-details">
+                    <h5 class="text-[#76b82d] text-xs font-bold tracking-wider mb-2 uppercase">¿Por qué es para ti?</h5>
+                    <p class="text-xs text-gray-300 leading-relaxed mb-6">Perfecto para marcas emergentes que quieren diferenciarse drásticamente de la competencia local rápido, aplicando innovación visual en sus productos de mayor rotación.</p>
+                    
+                    <h5 class="text-white text-xs font-bold tracking-wider mb-3 uppercase">¿Qué incluye exactamente?</h5>
+                    <ul class="space-y-2 text-xs text-gray-400">
+                        <li>• Hasta 5 platos/bebidas modelados en RA</li>
+                        <li>• Códigos QR dinámicos para mesas o barras</li>
+                        <li>• Despliegue web ultra optimizado y ligero</li>
+                        <li>• Soporte técnico estándar</li>
+                    </ul>
+                    <a href="https://wa.me/tu-numero-aqui?text=Hola%20Luis,%20me%20interesa%20el%20Plan%20Gastro%20Express" class="mt-6 block text-center w-full py-3 bg-white text-black font-black text-xs uppercase tracking-widest hover:bg-[#76b82d] transition-colors rounded">Solicitar Plan</a>
+                </div>
+            </div>
+
+            <div class="glass-card p-8 cursor-pointer group border-[#76b82d]/20" onclick="selectPlan(this)">
+                <div class="flex justify-between items-start mb-2">
+                    <span class="text-xs font-bold tracking-widest text-[#76b82d] uppercase">Alta Cocina / Gourmet</span>
+                    <span class="bg-[#76b82d]/10 text-[#76b82d] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">Más Popular</span>
+                </div>
+                <h3 class="text-2xl font-black tracking-tight mb-4">GASTRO PREMIUM</h3>
+                <p class="text-sm text-gray-400 mb-6">El menú principal interactivo. Diseñado para restaurantes de alta etiqueta que transforman la gastronomía en un arte visual.</p>
+                
+                <div class="space-y-1 mb-6">
+                    <div class="text-sm text-gray-400">Setup Inicial (Único pago): <strong class="text-white">$350</strong></div>
+                    <div class="text-4xl font-black text-[#76b82d]">$59 <span class="text-xs font-normal text-gray-500 uppercase">/ Mes</span></div>
+                    <div class="text-xs text-gray-500 italic">Opcional: $580 todo el año completo</div>
+                </div>
+
+                <div class="plan-details">
+                    <h5 class="text-[#76b82d] text-xs font-bold tracking-wider mb-2 uppercase">¿Por qué es para ti?</h5>
+                    <p class="text-xs text-gray-300 leading-relaxed mb-6">Si tu menú es una propuesta conceptual donde el emplatado es sagrado, tus comensales merecen apreciarlo sin margen de duda. Aumenta la conversión en los platos de mayor costo de tu carta.</p>
+                    
+                    <h5 class="text-white text-xs font-bold tracking-wider mb-3 uppercase">¿Qué incluye exactamente?</h5>
+                    <ul class="space-y-2 text-xs text-gray-400">
+                        <li>• Hasta 15 platos modelados en Realidad Aumentada</li>
+                        <li>• <strong>Botón de Audio-Descripción integrado</strong> (Accesibilidad)</li>
+                        <li>• Soporte para traducción automática multi-idioma</li>
+                        <li>• 2 cambios/actualizaciones de platos gratis cada 6 meses</li>
+                    </ul>
+                    <a href="https://wa.me/tu-numero-aqui?text=Hola%20Luis,%20me%20interesa%20el%20Plan%20Gastro%20Premium" class="mt-6 block text-center w-full py-3 bg-[#76b82d] text-black font-black text-xs uppercase tracking-widest hover:bg-white transition-colors rounded">Solicitar Plan</a>
+                </div>
+            </div>
+
+            <div class="glass-card p-8 cursor-pointer group" onclick="selectPlan(this)">
+                <span class="text-xs font-bold tracking-widest text-cyan-400 block mb-2 uppercase">Cadenas & Hoteles Boutique</span>
+                <h3 class="text-2xl font-black tracking-tight mb-4">HOTEL EXECUTIVE</h3>
+                <p class="text-sm text-gray-400 mb-6">Infraestructura robusta de nivel corporativo para operaciones de hotelería complejas que combinan múltiples ambientes.</p>
+                
+                <div class="space-y-1 mb-6">
+                    <div class="text-sm text-gray-400">Setup Inicial (Único pago): <strong class="text-white">$750</strong></div>
+                    <div class="text-4xl font-black text-[#76b82d]">$129 <span class="text-xs font-normal text-gray-500 uppercase">/ Mes</span></div>
+                    <div class="text-xs text-gray-500 italic">Contrato mínimo requerido de un (1) año</div>
+                </div>
+
+                <div class="plan-details">
+                    <h5 class="text-[#76b82d] text-xs font-bold tracking-wider mb-2 uppercase">¿Por qué es para ti?</h5>
+                    <p class="text-xs text-gray-300 leading-relaxed mb-6">La solución definitiva para gerentes de alimentos y bebidas enfocados en la excelencia operativa. Ideal para unificar la oferta del restaurante central, el bar de la piscina y el Room Service bajo una sola suite interactiva de lujo.</p>
+                    
+                    <h5 class="text-white text-xs font-bold tracking-wider mb-3 uppercase">¿Qué incluye exactamente?</h5>
+                    <ul class="space-y-2 text-xs text-gray-400">
+                        <li>• Hasta 30 elementos en RA (Platos y alta coctelería)</li>
+                        <li>• Audio-Descripción bilingüe avanzada (Español/Inglés)</li>
+                        <li>• Interfaz 100% personalizada con el branding del hotel</li>
+                        <li>• Reportes trimestrales de analítica y métricas de escaneo</li>
+                        <li>• Soporte técnico prioritario 24/7 y servidor dedicado</li>
+                    </ul>
+                    <a href="https://wa.me/tu-numero-aqui?text=Hola%20Luis,%20quiero%20coordinar%20el%20Piloto%20Gratuito%20para%20mi%20Hotel" class="mt-6 block text-center w-full py-3 bg-cyan-500 text-black font-black text-xs uppercase tracking-widest hover:bg-white transition-colors rounded">Solicitar Piloto Hotel</a>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <section class="max-w-4xl mx-auto px-6 pb-28 text-center">
+        <div class="p-12 bg-gradient-to-r from-green-950/40 to-blue-950/40 rounded-3xl border border-white/5 relative overflow-hidden">
+            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-[#76b82d]/10 rounded-full blur-3xl"></div>
+            <h3 class="text-2xl md:text-3xl font-black uppercase mb-4">¿Listo para transformar la experiencia de tus huéspedes?</h3>
+            <p class="text-gray-400 max-w-xl mx-auto mb-8 text-sm">
+                No arriesgues presupuesto. Conversemos por 15 minutos en una videollamada para mostrarte cómo se integraría la identidad visual de tu hotel dentro de nuestra arquitectura de Realidad Aumentada.
+            </p>
+            <a href="https://wa.me/tu-numero-aqui?text=Hola%20Luis,%20quiero%20agendar%20la%20videollamada%20de%2015%20minutos%20para%20ver%20la%20demo%20en%20vivo." 
+               class="inline-block bg-[#76b82d] text-black font-black px-8 py-4 rounded-xl hover:bg-white hover:scale-105 transition-all text-sm tracking-widest uppercase">
+                Agendar Demostración Gratuita
+            </a>
+        </div>
+    </section>
+
+    <footer class="p-8 text-center border-t border-white/5 bg-black/40 text-xs text-gray-500 tracking-widest uppercase">
+        © 2026 GUSTÓ 3D | CARACAS, VENEZUELA — TODOS LOS DERECHOS RESERVADOS.
     </footer>
 
     <script>
         function selectPlan(el) {
-            document.querySelectorAll('.glass-panel').forEach(p => p.classList.remove('selected'));
-            el.classList.add('selected');
+            const isSelected = el.classList.contains('selected');
+            // Cerrar todos los planes primero
+            document.querySelectorAll('.glass-card').forEach(p => p.classList.remove('selected'));
+            
+            // Si el plan cliqueado no estaba seleccionado, se abre
+            if (!isSelected) {
+                el.classList.add('selected');
+            }
         }
     </script>
 </body>
