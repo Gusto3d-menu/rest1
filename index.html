@@ -294,10 +294,9 @@
             }
         }
 
-        // --- CARRUSEL DE PLATOS 3D EN TIEMPO REAL ---
-        // 1. Agrega aquí los nombres exactos de tus archivos .glb subidos a GitHub
+        // --- CARRUSEL DE PLATOS 3D PREMIUM CON PRECARGA ---
         const platos3D = [
-            "centro.glb",       // El plato actual
+            "centro.glb",       // El plato inicial
             "plato2.glb",       // Tu segundo escaneado
             "plato3.glb"        // Tu tercer escaneado
         ];
@@ -305,20 +304,41 @@
         let indexActual = 0;
         const visor = document.querySelector("model-viewer");
 
-        // 2. Función que cambia el asset con un efecto de transición limpio
+        // Función para precargar los modelos en la caché del navegador
+        function precargarAssets() {
+            platos3D.forEach((url) => {
+                const link = document.createElement('link');
+                link.rel = 'preload';
+                link.href = url;
+                link.as = 'fetch';
+                link.crossOrigin = 'anonymous';
+                document.head.appendChild(link);
+            });
+        }
+
+        // Ejecutar la precarga apenas el sitio esté listo
+        precargarAssets();
+
+        // Función de rotación fluida
         function rotarPlatos() {
             indexActual = (indexActual + 1) % platos3D.length;
             
-            // Desvanecer sutilmente antes de cambiar (opcional para suavidad)
-            visor.style.opacity = 0.3;
+            // Suavizamos el cambio bajando la opacidad
+            visor.style.transition = "opacity 0.4s ease";
+            visor.style.opacity = 0;
             
             setTimeout(() => {
+                // Al estar precargado en caché, el cambio de .src no generará congelamiento
                 visor.src = platos3D[indexActual];
-                visor.style.opacity = 1;
-            }, 300); // 300 milisegundos de transición
+                
+                // Esperamos a que el visor procese el archivo cargado para volver a mostrarlo
+                visor.addEventListener('load', () => {
+                    visor.style.opacity = 1;
+                }, { once: true });
+            }, 400); 
         }
 
-        // 3. Configurar el tiempo de rotación: 6000 milisegundos = 6 segundos
+        // Configurar el intervalo de rotación a 6 segundos
         setInterval(rotarPlatos, 6000);
     </script>
 </body>
