@@ -293,6 +293,33 @@
                 el.classList.add('selected');
             }
         }
+
+        // --- CARRUSEL DE PLATOS 3D EN TIEMPO REAL ---
+        // 1. Agrega aquí los nombres exactos de tus archivos .glb subidos a GitHub
+        const platos3D = [
+            "centro.glb",       // El plato actual
+            "plato2.glb",       // Tu segundo escaneado
+            "plato3.glb"        // Tu tercer escaneado
+        ];
+
+        let indexActual = 0;
+        const visor = document.querySelector("model-viewer");
+
+        // 2. Función que cambia el asset con un efecto de transición limpio
+        function rotarPlatos() {
+            indexActual = (indexActual + 1) % platos3D.length;
+            
+            // Desvanecer sutilmente antes de cambiar (opcional para suavidad)
+            visor.style.opacity = 0.3;
+            
+            setTimeout(() => {
+                visor.src = platos3D[indexActual];
+                visor.style.opacity = 1;
+            }, 300); // 300 milisegundos de transición
+        }
+
+        // 3. Configurar el tiempo de rotación: 6000 milisegundos = 6 segundos
+        setInterval(rotarPlatos, 6000);
     </script>
 </body>
 </html>
