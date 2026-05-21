@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gustó 3D - Experiencia RA</title>
     <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
@@ -8,29 +9,47 @@
     
     <style>
         body { margin: 0; overflow: hidden; }
-        /* UI simple para indicarle al usuario qué hacer */
+        /* Interfaz holográfica sobre la cámara */
         #ui-overlay {
             position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
-            z-index: 1000; font-family: sans-serif; background: rgba(0,0,0,0.7);
-            color: white; padding: 10px 20px; border-radius: 20px; pointer-events: none;
-            text-align: center; font-size: 14px; border: 1px solid #22c55e;
+            z-index: 1000; font-family: sans-serif; background: rgba(11, 15, 25, 0.85);
+            color: white; padding: 12px 24px; border-radius: 20px; pointer-events: none;
+            text-align: center; font-size: 14px; border: 1px solid #76b82d;
+            box-shadow: 0 0 15px rgba(118, 184, 45, 0.4);
+            letter-spacing: 1px; text-transform: uppercase; font-weight: bold;
         }
     </style>
 </head>
 <body>
 
-    <div id="ui-overlay">Apunta tu cámara hacia el código QR del menú</div>
+    <div id="ui-overlay">Apunta tu cámara hacia el QR Gustó 3D</div>
 
-    <a-scene mindar-image="imageTargetSrc: ./targets.mind;" color-space="sRGB" renderer="colorManagement: true, physicallyCorrectLights: true" vr-mode-ui="enabled: false" device-orientation-permission-ui="enabled: false">
+    <a-scene 
+        mindar-image="imageTargetSrc: ./targets.mind; maxTrack: 1;" 
+        color-space="sRGB" 
+        renderer="colorManagement: true, physicallyCorrectLights: true" 
+        vr-mode-ui="enabled: false" 
+        device-orientation-permission-ui="enabled: false">
       
-      <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+        <a-assets>
+            <a-asset-item id="modeloCentro" src="centro.glb"></a-asset-item>
+            <a-asset-item id="modeloPlato2" src="plato2.glb"></a-asset-item>
+            <a-asset-item id="modeloPlato3" src="plato3.glb"></a-asset-item>
+        </a-assets>
 
-      <a-entity mindar-image-target="targetIndex: 0">
-        
-        <a-box position="0 0 0" rotation="0 45 0" scale="0.5 0.5 0.5" material="color: #22c55e; opacity: 0.8"></a-box>
-        
-      </a-entity>
-    </a-scene>
+        <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+        <a-entity mindar-image-target="targetIndex: 0">
+            <a-gltf-model 
+                src="#modeloCentro" 
+                position="0 0 0" 
+                rotation="90 0 0" 
+                scale="1 1 1"
+                animation="property: rotation; to: 90 360 0; loop: true; dur: 10000; easing: linear">
+            </a-gltf-model>
+        </a-entity>
+
+        </a-scene>
 
 </body>
 </html>
